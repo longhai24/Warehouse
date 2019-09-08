@@ -1,0 +1,132 @@
+
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>管理员-修改</title>
+<link rel="stylesheet" type="text/css" href="../css/style_admin.css">
+
+</head>
+
+<body>
+	<form name="form1" action="addManager.jsp" method="post">
+		<table cellspacing="1" cellpadding="4" width="100%"
+			class="tableborder" id="table3">
+
+			<input type="hidden" name="action" value="save" />
+			<tr>
+				<td colspan="12" class="header">管理员-修改</td>
+			</tr>
+			<tr>
+				<td class="altbg1">管理员名称：</td>
+				<td class="altbg2" colspan="11"><input type="text"
+					name="userName" size="34" value="admin"></td>
+			</tr>
+			<tr>
+				<td class="altbg1">密&nbsp; 码：</td>
+				<td class="altbg2" colspan="11"><input type="password"
+					name="password" size="34"></td>
+			</tr>
+			<tr>
+				<td class="altbg1">确认密码：</td>
+				<td class="altbg2" colspan="11"><input name="confirmpassword"
+					size="34" type="password"></td>
+			</tr>
+			<tr>
+				<td class="altbg1">角色：</td>
+				<td><select name="txtRole">
+						<option value="1">超级管理员</option>
+
+
+				</select></td>
+			</tr>
+
+			<tr>
+				<td class="altbg1"></td>
+				<td class="altbg2" colspan="11"><input type="button" value="提交"
+					name="B1" id="submi"> &nbsp; <input type="button" value="重置"
+					name="B2"></td>
+			</tr>
+
+		</table>
+	</form>
+</body>
+<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+	var userName = window.sessionStorage.getItem("username");
+	var userPwd = window.sessionStorage.getItem("userpwd");
+	var userRid  =window.sessionStorage.getItem("userrid");
+	var userId = window.sessionStorage.getItem("userid");
+	
+	$("tr").eq(1).children().children().val(userName);
+	$("tr").eq(2).children().children().val(userPwd);
+		var opi1 = $("<option value='2'>普通管理员</option>");
+		var opi2 = $("<option value='3'>用户</option>");
+		$("select").append(opi1).append(opi2);
+	var Pwd = 	$("tr").eq(2).children().children().val();
+	var nrid = window.sessionStorage.getItem("nrid");
+	var checkText=$("select").find("option:selected").text();
+	//超级管理员操作自己
+	if (userRid ==1) {
+		$("select").change(function() {
+			alert("超级管理员无法更改权限")
+			$("select").val(1);
+		})
+		//普通管理员操作下级
+// 	}else if(userRid ==3 &&nrid ==2){
+// 		$("select option").eq(0).hide();
+// 		$("select").val(2);
+// 		//普通管理员操作自己
+// 	}else if(userRid ==2 &&nrid ==2){
+// 		$("select option").eq(0).hide();
+// 		$("select").val(2);
+// 		//超级管理员操作下级
+// 	}else if(nrid ==1){
+// 		if (userRid ==3||userRid==2) {
+// 			$("select option").eq(0).hide();
+// 			$("select").val(2);
+// 		}
+		
+	}else{
+		$("select option").eq(0).hide();
+		$("select").val(2);
+	}
+	
+	$("#submi").click(function() {
+		var userna = $("tr").eq(1).children().children().val();
+		var checkPwd2 = $("tr").eq(2).children().children().val();
+		var checkPwd = $("tr").eq(3).children().children().val();
+		if (checkPwd==checkPwd2) {
+			var Nusername =$("tr").eq(1).children().children().val();
+			var select = $("select").val();
+			var sum = {userid:userId,username:userna,userpwd:checkPwd,rid:select}
+			var i = JSON.stringify(sum)
+			$.ajax({
+				url:"http://localhost:8080/Goods/c/GoodsAction?method=updateUser",
+				data:{i:i},
+				type:"post",
+				dataType:"json",
+				success: function(data) {
+					alert("ok")
+					if (data.fir =="200") {
+						if(select ==3){
+							alert("用户身份过期请重新登录")
+							window.parent.location.href="login.html";
+							}else{
+								alert(data.sec);
+								window.location.href="showUserList.html";
+							}
+						
+					}else{
+						alert(data.sec)
+					}
+				}
+			})
+		}else {
+			alert("请确认两次密码输入正确")
+		}
+		
+	})
+</script>
+</html>

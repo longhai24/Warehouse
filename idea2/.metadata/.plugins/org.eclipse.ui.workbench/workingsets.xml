@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workingSetManager>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1557103532760_1" label="mybatis_1" name="mybatis_1">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mybatis_1" type="4"/>
+</workingSet>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1557306185633_2" label="mybatis_2" name="mybatis_2">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mybatis_2" type="4"/>
+</workingSet>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1557392883895_3" label="mybatis_3" name="mybatis_3">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mybatis_3" type="4"/>
+</workingSet>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1557718517129_4" label="mybatis_6" name="mybatis_6">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mybatis_6(代理模式)" type="4"/>
+</workingSet>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1558418083393_5" label="spring_1" name="spring_1">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/spring_1" type="4"/>
+</workingSet>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1558518346555_6" label="spring_2" name="spring_2">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/spring_2" type="4"/>
+</workingSet>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1558669311271_7" label="spring_3" name="spring_3">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/spring_3" type="4"/>
+</workingSet>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1559628786892_8" label="say" name="say">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/say" type="4"/>
+</workingSet>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1560142591997_9" label="springmvc.t2_2" name="springmvc.t2_2">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/springmvc.t2_2" type="4"/>
+</workingSet>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1555910382308_0" label="Window Working Set" name="Aggregate for window 1555910382308"/>
+</workingSetManager>

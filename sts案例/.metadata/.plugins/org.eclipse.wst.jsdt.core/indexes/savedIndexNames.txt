@@ -1,0 +1,20 @@
+INDEX VERSION 1.4+C:\ËïÂÔÜø\Y2\MTest\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+1658264207.index
+637559191.index
+630383119.index
+1657330681.index
+3633409031.index
+1366163070.index
+275218668.index
+1177384588.index
+3356362779.index
+3690153999.index
+449079426.index
+2864220331.index
+1862124940.index
+3769049233.index
+799771252.index
+1170167355.index
+3758961878.index
+3251886202.index
+2262998035.index

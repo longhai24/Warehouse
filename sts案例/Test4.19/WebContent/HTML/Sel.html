@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<a href="NewFile.html">新增商品</a>
+	<table>
+		<thead>
+			<tr>
+				<td>商品名称</td>
+				<td>分类</td>
+				<td>型号</td>
+				<td>单价</td>
+				<td>操作</td>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+</body>
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<!-- <script type="text/javascript" src="../WEB-INF/JS/jquery-3.3.1.min.js"></script> -->
+<script type="text/javascript">
+	$.ajax({
+		url:"/Test4.19/GoodsAction",
+		type:"post",
+		data:{method:"selAll"},
+		dataType:"json",
+		success: function(data) {
+			for ( var i in data) {
+				var tr = $("<tr id="+data[i].goodsId+"></tr>");
+				var td1 = $("<td>"+data[i].goodsName+"</td>");
+				var td2 = $("<td>"+data[i].goodsClassName+"</td>");
+				var td3 = $("<td>"+data[i].goodsType+"</td>");
+				var td4 = $("<td>"+data[i].goodsPrice+"</td>");
+				var td5 = $("<td><a href='NewFile.html' class='update' >修改</a><a href='' class='del'>删除</a></td>");
+				tr.append(td1).append(td2).append(td3).append(td4).append(td5);
+				$("tbody").append(tr);		
+				}
+		}
+	})
+	$(document).on("click", ".del", function(e) {
+		var rid2 = $(this).parent().parent().attr("id");
+		$.ajax({
+		url:"/Test4.19/GoodsAction",
+		type:"post",
+		data:{method:"del",did:rid2},
+		dataType:"json",
+		success:function(data) {
+			if (data.fir =="200") {
+				alert(data.sec);
+				window.location.href="Sel.html"
+			}else {
+				alert(data.sec)
+			}
+		}
+		})
+		return false;
+	})
+	
+	$(document).on("click", ".update", function(e) {
+		window.sessionStorage.setItem("io1", "ok")
+		var goodsId = $(this).parent().parent().attr("id")
+		sessionStorage.setItem("uid",goodsId)
+	})	
+</script>
+</html>

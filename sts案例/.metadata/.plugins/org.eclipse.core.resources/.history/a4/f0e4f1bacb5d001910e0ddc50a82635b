@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<table border="1px solid">
+		<thead>
+			<tr>
+				<td>姓名</td>
+				<td>工作</td>
+				<td>工资</td>
+				<td>入职时间</td>
+				<td>奖金</td>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+</body>
+<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+	var data = window.sessionStorage.getItem("data1");
+	var date1 = eval('('+data+')')
+// 	$.each(date1,function(i,j){
+// 		alert(j.dept_id)
+// 	})
+	for ( var i in date1) {
+		
+	var tr=$("<tr id='"+date1[i].emp_id+"'></tr>");
+	var td1 = $("<td>"+date1[i].emp_name+"</td>");
+	var td2 = $("<td>"+date1[i].emp_work+"</td>");
+	var td3 = $("<td>"+date1[i].emp_money+"</td>");
+	var td4 = $("<td>"+date1[i].emp_time+"</td>");
+	var td5 = $("<td >"+date1[i].emp_bonus+"</td>");
+	var td6 = $("<td id='"+date1[i].emp_deptid+"'><a href=''>删除</a> </td>");
+	tr.append(td1).append(td2).append(td3).append(td4).append(td5).append(td6);
+	$("tbody").append(tr)
+		
+	}
+	$(document).on("click","a",function(){
+		var did = $(this).parent().parent().attr("id");
+		var count = $(this).parent().attr("id");
+		var rem=$(this).parent().parent()
+		if (confirm("确认删除吗")) {
+			$.ajax({
+				url : "http://localhost:8080/Test4.13/TestAction",
+				data:{did:did,method:"del"},
+				dataType:"json",
+				type:"post",
+				success: function(data) {
+						if (data.fir=="200") {
+							alert(data.sec);
+							rem.remove();
+							$.ajax({
+								url : "http://localhost:8080/Test4.13/TestAction",
+								data:{count:count,method:"mes"},
+								dataType:"json",
+								type:"post",
+								success: function(date) {
+									alert(date)
+								}
+							})
+						}
+					
+				}
+			})
+		}
+		
+		return false;
+	})
+</script>
+</html>

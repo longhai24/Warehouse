@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>单个与批量新增</title>
+</head>
+
+<body>
+	<div>
+		<table border="0">
+			<tr>
+				<td>编号:</td>
+				<td><input type="text" id="pid" /></td>
+			</tr>
+			<tr>
+				<td>姓名:</td>
+				<td><input type="text" id="pname" /></td>
+			</tr>
+			<tr>
+				<td>性别:</td>
+				<td><input type="radio" name="psex" value="0" checked="checked" />男
+					<input type="radio" name="psex" value="1" />女</td>
+			</tr>
+			<tr>
+				<td>生日:</td>
+				<td><input type="date" id="pdate" /></td>
+			</tr>
+			<tr>
+				<th><input id="regBtn" type="button" value="保存" /></th>
+				<th><input id="addBtn" type="button" value="加入" /></th>
+			</tr>
+		</table>
+	</div>
+	<h1>批量新增</h1>
+	<div>
+		<table border="0">
+			<thead>
+				<tr>
+					<th>编号</th>
+					<th>姓名</th>
+					<th>性别</th>
+					<th>生日</th>
+				</tr>
+			</thead>
+			<tbody id="cnt">
+			</tbody>
+			<tfoot>
+				<tr>
+					<th><input id="batchBtn" type="button" value="批量保存" /></th>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</body>
+<script src="../js/jquery-1.12.4.js"></script>
+<script type="text/javascript">
+	//splice
+	persons = [];//数组提交
+
+	//单个提交
+	$("#regBtn").click(function() {
+		var person = {};
+		person["pid"] = $("#pid").val();
+		person["pname"] = $("#pname").val();
+		person["psex"] = $("input[name='psex']:checked").val();
+		person["pdate"] = $("#pdate").val();
+		$.ajax("/springmvc_3/person/add1",{
+			type:"post",
+			dataType:"json",
+			contentType:"application/json",//非常重要
+			//序列化
+			data:JSON.stringify(person),
+			success:function(data){
+				if(data.code=="200"){
+					alert("新增成功");
+					
+				}
+			}
+		});
+	});
+
+	//加入
+	$("#addBtn").click(
+			function() {
+				var person = {};
+				person["pid"] = $("#pid").val();
+				person["pname"] = $("#pname").val();
+				person["psex"] = $("input[name='psex']:checked").val();
+				person["pdate"] = $("#pdate").val();
+				$("#cnt").append(
+						"<tr><td>" + person["pid"] + "</td><td>"
+								+ person["pname"] + "</td><td>"
+								+ person["psex"] + "</td><td>"
+								+ person["pdate"] + "</td></tr>");
+				persons.push(person);//追加
+	});
+
+	//批量提交
+	$("#batchBtn").click(function() {
+		$.ajax("/springmvc_3/person/add2",{
+			type:"post",
+			dataType:"json",
+			contentType:"application/json",//非常重要
+			//序列化
+			data:JSON.stringify(persons),
+			success:function(data){
+				if(data.code=="200"){
+					alert("新增成功");
+					
+				}
+			}
+		});
+		alert(JSON.stringify(persons));
+	});
+</script>
+</html>

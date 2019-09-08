@@ -1,0 +1,30 @@
+package com.accp.Test.dao;
+
+import java.util.Iterator;
+import java.util.Map;
+
+import com.accp.Test.annotation.Table;
+@SuppressWarnings("all")
+public class CommonDao extends BaseDao{
+	//É¾³ý
+	
+	public int delete(Class cls,Map<String, Object> map) {
+		String tabName=null;
+		if(cls.isAnnotationPresent(Table.class)) {
+			Table tab=(Table) cls.getDeclaredAnnotation(Table.class);
+			tabName=tab.value();
+		}
+		String sql="delete from "+tabName+" where 1=1";
+		if(map!=null) {
+			Iterator iter = map.entrySet().iterator();
+				while (iter.hasNext()) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					Object key = entry.getKey();
+					Object val = entry.getValue();
+					sql+=" and "+key+"='"+val+"'";
+				}
+		}
+		System.out.println("É¾³ýµÄsql"+sql);
+		return super.Update(sql);
+	}
+}

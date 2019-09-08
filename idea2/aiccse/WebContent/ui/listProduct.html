@@ -1,0 +1,101 @@
+
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="zh-cn">
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+		<title>管理人员-管理</title>
+		<link rel="stylesheet" type="text/css" href="../css/style_admin.css">
+</head>
+<body>
+		<table cellspacing="1" cellpadding="4" width="100%"
+			class="tableborder" id="table3">
+			<form name="form1" action="" method="post">
+			<tr>
+				<td colspan="15" class="header">
+					<form>
+						<select>
+							<option selected>商品名称</option>
+							<option>商品商标</option>
+							<option>商品型号</option>
+						</select>
+						&nbsp;&nbsp;<input type="text" value=""><input type=submit value="查询">
+					</form>
+				</td>
+			</tr>
+			<tr>
+				<td align="center" class="altbg1">
+					<b>商品编号</b>
+				</td>
+				<td align="center" class="altbg1">
+					<b>商品名称</b>
+				</td>
+				<td align="center" class="altbg1">
+					<b>商品商标</b>
+				</td>
+				<td align="center" class="altbg1">
+					<b>商品型号</b>
+				</td>
+				<td align="center" class="altbg1">
+					<b>商品价格</b>
+				</td>				
+				<td align="center" class="altbg1">
+					<b>操作</b>
+				</td>
+				
+			</tr>
+			
+			
+			
+
+
+			</table>
+</body>
+<script type="text/javascript" src="../static/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+	//修改
+	$(document).on("click",".ax",function(){
+		var pid = $(this).parents("tr").find("td:eq(0)").html();
+		window.sessionStorage.setItem("pid",pid);
+		location.href="updateProduct.html";
+		return false;
+	})
+	//查看详情
+	$(document).on("click",".ac",function(){
+		var pid = $(this).parents("tr").find("td:eq(0)").html();
+		window.sessionStorage.setItem("pid",pid);
+		location.href="info.html";
+		return false;
+	})
+	 fnxr() 
+		$('[type=submit]').click(function(){
+			 fnxr()
+			return false;
+		})
+	function fnxr(){
+			var type = $(".header").find("select").val();
+			var name = $(".header").find($('[type="text"]')).val();
+			$.ajax({
+				url:"/aiccse/c/goods?usr=manageProduct",
+				data:{type:type,name:name},
+				type:"post",
+				dataType:"json",
+				success: function(result) {
+					$("#table3").find("tr:gt(1)").children().remove();
+//					$("#table3>tr:gt(1)").children().remove();
+					$.each(result,function(i,j){
+						var tr = $("<tr>");
+						var pid = $('<td class="altbg2"  align="center"></td>').html(j.pid);
+						var pname = $('<td class="altbg2"  align="center"></td>').html(j.pname);
+						var pflag = $('<td class="altbg2"  align="center"></td>').html(j.pflag);
+						var ptype = $('<td class="altbg2"  align="center"></td>').html(j.ptype);
+						var pprice = $('<td class="altbg2"  align="center"></td>').html(j.pprice);
+						var pupdata = $('<td class="altbg2"  align="center"><a href="updateProduct.html?productID=1" class = "ax">修改&nbsp&nbsp</a><a href="updateProduct.html?productID=1" class = "ac">查看详情</a></td>');
+//						var pdelete = $('<td class="altbg2"  align="center"><a href="updateProduct.html?productID=1">删除</a></td>');
+						tr.append(pid).append(pname).append(pflag).append(ptype).append(pprice).append(pupdata);
+						$("#table3").append(tr);
+					})
+				}
+			})
+	}
+</script>
+</html>

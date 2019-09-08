@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+
+	<bean id="sum" class="pojo.Human">
+		<property value="罗玉凤" name="name"></property>
+		<property value="男" name="sex"></property>
+		<property value="2000"  name="birthday" >
+		</property>	
+		<property name="hobby">
+			<list>
+				<value>卖萌</value>
+				<value>逛街</value>
+			</list>
+		</property>
+	</bean>
+</beans>

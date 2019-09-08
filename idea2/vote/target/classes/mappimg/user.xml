@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.accp.dao.UserIDao">
+    <!--  	登陆 -->
+    <select id="login" resultMap="findgroup">
+ 		SELECT * FROM `user` WHERE `uname` = #{name} AND `upwd` = #{pwd}
+ 	</select>
+    <resultMap type="user" id="findgroup">
+        <association property="g" column="gid" select="sgroup"></association>
+    </resultMap>
+    <!--  	查询自己所在得组 -->
+    <select id="sgroup" resultType="Group">
+ 		select * from `group` where gid = #{0}
+ 	</select>
+    <!--  	注册用户 -->
+    <insert id="adduser">
+        INSERT INTO `user` (`uname`,`upwd`,`uEmail`
+        <if test="u.gid != null and u.gid != ''">
+            ,`gid`
+        </if>
+        )
+        VALUES(#{u.name},#{u.pwd},#{u.emial}
+        <if test="u.gid != null and u.gid != ''">
+            ,#{u.gid}
+        </if>
+        )
+    </insert>
+    <!--	根据gid查询组织-->
+    <select id="findGroup" resultType="Group">
+		SELECT * FROM `group` WHERE `gid` = #{gid}
+	</select>
+    <update id="modifyUser">
+        UPDATE `user`
+        <set>
+            <if test="u.uname != null and u.uname != null">
+                `uname` = #{u.uname},
+            </if>
+            <if test="u.uEmail != null and u.uEmail != ''">
+                `uEmail` = #{u.uEmail},
+            </if>
+            <if test="u.uDescri != null and u.uDescri != ''">
+                `uDescri` = #{u.uDescri},
+            </if>
+            <if test="u.uAddress != null and u.uAddress != ''">
+                `uAddress` = #{u.uAddress},
+            </if>
+            <if test="u.gid != null and u.gid != ''">
+                `gid` = #{u.gid},
+            </if>
+        </set>
+        where uid = #{u.uid}
+    </update>
+    <!--	添加桶-->
+    <insert id="addVotep">
+		INSERT INTO `votepail` (`vpname`,`vptrace`,`vpaction`,`uid`,`vstarttime`,`vdeadline`,`vpa`)
+		VALUES(
+			#{vp.vpname},#{vp.vptrace},#{vp.vpaction},#{vp.u.uid},#{vp.vstarttime},#{vp.vdeadline},#{vp.vpa}
+		)
+	</insert>
+    <!--	查询桶-->
+    <select id="findVp" resultType="VotePail">
+		select * from  VotePail where uid = #{uid} and vpa = '0'
+	</select>
+    <select id="findVps" resultType="VotePail">
+        select * from  VotePail where uid = #{uid}
+    </select>
+    <!--	添加投票-->
+    <insert id="addVote">
+        INSERT INTO `vote` (`vpid`,`vissue`
+        <if test="v.voptionA !=null and v.voptionA != ''">
+            ,`voptionA`
+        </if>
+        <if test="v.voptionB !=null and v.voptionB != ''">
+            ,`voptionB`
+        </if>
+        <if test="v.voptionC !=null and v.voptionC != ''">
+            ,`voptionC`
+        </if>
+        <if test="v.voptionD !=null and v.voptionD != ''">
+            ,`voptionD`
+        </if>
+        <if test="v.voptionE !=null and v.voptionE != ''">
+            ,`voptionE`
+        </if>
+        )
+        values (#{v.vpid},#{v.name}
+        <if test="v.voptionA !=null and v.voptionA != ''">
+            ,#{v.voptionA}
+        </if>
+        <if test="v.voptionB !=null and v.voptionB != ''">
+            ,#{v.voptionB}
+        </if>
+        <if test="v.voptionC !=null and v.voptionC != ''">
+            ,#{v.voptionC}
+        </if>
+        <if test="v.voptionD !=null and v.voptionD != ''">
+            ,#{v.voptionD}
+        </if>
+        <if test="v.voptionE !=null and v.voptionE != ''">
+            ,#{v.voptionE}
+        </if>
+        )
+    </insert>
+    <!--    根据桶id查询桶-->
+    <select id="findVotePail" resultType="com.accp.pojo.VotePail">
+        select * from votepail where vpid = #{vpid};
+    </select>
+    <!--    根据桶id-->
+    <update id="modifyVp">
+        UPDATE `votepail`
+        <set>
+            <if test="v.vpname !=null and v.vpname !=''">
+                `vpname` = #{v.vpname},
+            </if>
+            <if test="v.vptrace !=null and v.vptrace !=''">
+                `vptrace` = #{v.vptrace},
+            </if>
+            <if test="v.vpaction !=null and v.vpaction !=''">
+                `vpaction` = #{v.vpaction},
+            </if>
+            <if test="v.vstarttime !=null">
+                `vstarttime` = #{v.vstarttime},
+            </if>
+            <if test="v.vdeadline !=null">
+                `vdeadline` = #{v.vdeadline},
+            </if>
+        </set>
+        where vpid = #{v.vpid}
+    </update>
+    <!--    根据桶id查询所有投票-->
+    <select id="findVotes" resultType="com.accp.pojo.Vote">
+        SELECT * FROM `vote` WHERE `vpid` = #{vpid}
+    </select>
+    <select id="findVote" resultType="com.accp.pojo.Vote">
+        SELECT * FROM `vote` WHERE `vid` = #{vid}
+    </select>
+    <update id="modifyVote">
+        UPDATE `vote`
+        <set>
+            <if test="v.vissue !=null and v.vissue != ''">
+                `vissue` = #{v.vissue},
+            </if>
+            <if test="v.voptionA !=null and v.voptionA != ''">
+                `voptionA` = #{v.voptionA},
+            </if>
+            <if test="v.voptionB !=null and v.voptionB != ''">
+                `voptionB`= #{v.voptionB},
+            </if>
+            <if test="v.voptionC !=null and v.voptionC != ''">
+                `voptionC` =#{v.voptionC},
+            </if>
+            <if test="v.voptionD !=null and v.voptionD != ''">
+                `voptionD` =#{v.voptionD},
+            </if>
+            <if test="v.voptionE !=null and v.voptionE != ''">
+                `voptionE` =#{v.voptionE}
+            </if>
+        </set>
+            where `vid` = #{v.vid}
+    </update>
+<!--    搜索全部-->
+    <select id="findTermVps" resultType="com.accp.vo.FindTermVpsVo">
+        SELECT `vpimg` AS image,`vpid` AS id ,`vpname` AS title,`vptrace` AS author  FROM `votepail`
+        <where>
+            `vpname` like '%${name}%' and
+            <if test='term == "1"'>
+                `uid` IN (SELECT `uid` FROM `user` WHERE `gid` = #{gid})  and vpaction = '1' and
+            </if>
+            <if test='term != "1"'>
+                vpaction = '0' and
+            </if>
+            `vstatus` = 0
+        </where>
+    </select>
+<!--    搜索并返回行数-->
+    <select id="findTermVpSun" resultType="string">
+        SELECT COUNT(*) AS sun FROM `votepail`
+        <where>
+            `vpname` like '%${name}%' and
+            <if test='term == "1"'>
+                `uid` IN (SELECT `uid` FROM `user` WHERE `gid` = #{gid}) and
+            </if>
+            `vstatus` = 0
+        </where>
+    </select>
+<!--    根据桶id查询该投票-->
+    <select id="findnterVote" resultMap="enterVote">
+        SELECT * FROM `votepail` WHERE `vpid` = #{vpid}
+    </select>
+    <resultMap id="enterVote" type="com.accp.pojo.VotePail">
+        <collection property="listVote" column="vpid"  select="evoer"></collection>
+    </resultMap>
+    <select id="evoer" resultType="com.accp.pojo.Vote">
+        SELECT * FROM `vote` WHERE `vpid` = #{0}
+    </select>
+<!--    投票进行添加-->
+    <insert id="addsubmitVote">
+        <foreach collection="pvlist" item="l">
+            INSERT INTO `pastvote` (`uid`,`voption`,`vid`)VALUES(#{l.uid},#{l.voption},#{l.vid});
+        </foreach>
+    </insert>
+    <select id="findjinsun" resultType="java.lang.Integer">
+        SELECT COUNT(`uid`) FROM `pastvote` WHERE `vid` = #{vid}
+    </select>
+    <select id="findjinjin" resultType="com.accp.vo.VoSunVo">
+        SELECT `voption`,COUNT(`voption`) AS sun FROM `pastvote` WHERE `vid` = #{vid} GROUP BY `voption`;
+    </select>
+</mapper>

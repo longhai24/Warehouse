@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace:命名空间【非常重要】，必填,类的完整限定名 -->
+<mapper namespace="com.accp.dao.lq">
+	<select id="selectAll" resultType="com.accp.entity.Student">
+		select * from student
+	</select>
+	<insert id="into" parameterType="com.accp.entity.Student">
+		insert into student(`stuname`,`stusex`,`stuage`)
+		values(#{stuname},#{stusex},#{stuage})
+	</insert>
+	<select id="selectid" parameterType="String" resultType="com.accp.entity.Student">
+		select * from student where stuno = #{0}
+	</select>
+	<update id="update" parameterType="com.accp.entity.Student">
+		UPDATE `student` SET `stuname` = #{stuname},`stusex`=#{stusex},`stuage`=#{stuage} 
+		WHERE `stuno` = #{stuno}
+	</update>
+	<delete id="delete" parameterType="String">
+		delete from `student` where `stuno` = #{0}
+	</delete>
+	<select id="like" resultType="com.accp.entity.Student">
+		select * from student where  stuname like '%#{0}%'
+	</select>
+</mapper> 

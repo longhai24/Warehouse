@@ -1,0 +1,120 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Language" content="zh-cn">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>管理人员-管理</title>
+<link rel="stylesheet" type="text/css" href="../css/style_admin.css">
+</head>
+<body>
+	<table cellspacing="1" cellpadding="4" width="100%" class="tableborder"
+		id="table3">
+		<form name="form1" action="showUserList.jsp" method="post">
+			<tr>
+				<td colspan="15" class="header">
+					<form>
+						<select>
+							<option selected>商品名称</option>
+							<option>商品商标</option>
+							<option>商品型号</option>
+						</select> &nbsp;&nbsp;<input type="text" placeholder="支持模糊查询"><input
+							type=submit value="查询">
+					</form>
+				</td>
+			</tr>
+			<tr>
+				<td align="center" class="altbg1"><b>商品编号</b></td>
+				<td align="center" class="altbg1"><b>商品名称</b></td>
+				<td align="center" class="altbg1"><b>商品商标</b></td>
+				<td align="center" class="altbg1"><b>商品型号</b></td>
+				<td align="center" class="altbg1"><b>商品价格</b></td>
+				<td align="center" class="altbg1"><b>操作</b></td>
+
+			</tr>
+	</table>
+</body>
+<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+	$
+			.ajax({
+				url : "http://localhost:8080/Goods/c/GoodsAction?method=selPro",
+				dataType : "json",
+				data : "",
+				type : "post",
+				success : function(data) {
+					for ( var i in data) {
+						var tr = $("<tr class='str'></tr>");
+						var td1 = $("<td align='center' class='altbg2'>"
+								+ data[i].pid + "</td>")
+						var td2 = $("<td align='center' class='altbg2'>"
+								+ data[i].pname + "</td>")
+						var td3 = $("<td align='center' class='altbg2'>"
+								+ data[i].pflag + "</td>")
+						var td4 = $("<td align='center' class='altbg2'>"
+								+ data[i].ptype + "</td>")
+						var td5 = $("<td align='center' class='altbg2'>"
+								+ data[i].pprice + "</td>")
+						var td6 = $("<td align='center' class='altbg2'> <a href='' class='examine'>查看详细信息</a></td>")
+						tr.append(td1).append(td2).append(td3).append(td4)
+								.append(td5).append(td6);
+						$("tbody").append(tr);
+					}
+				}
+			})
+
+	$(document).on("click", ".examine", function(e) {
+		var pid = $(this).parents("tr").find("td:eq(0)").text();
+		var pname = $(this).parents("tr").find("td:eq(1)").text();
+		var pflag = $(this).parents("tr").find("td:eq(2)").text();
+		var ptype = $(this).parents("tr").find("td:eq(3)").text();
+		var pprice = $(this).parents("tr").find("td:eq(4)").text();
+		window.sessionStorage.setItem("pid", pid);//存储数据
+		window.sessionStorage.setItem("pname", pname);//存储数据
+		window.sessionStorage.setItem("pflag", pflag);//存储数据
+		window.sessionStorage.setItem("ptype", ptype);//存储数据
+		window.sessionStorage.setItem("pprice", pprice);//存储数据
+		window.location.href = "info.html";
+		return false;
+	})
+	
+	$("input").eq(1).click(function() {
+		var type =$("select").val();
+		var word = $("input").eq(0).val();
+		$.ajax({
+			url:"http://localhost:8080/Goods/c/GoodsAction?method=selSome",
+			data:{type:type,word:word},
+			type:"post",
+			dataType:"json",
+			success: function(data) {
+				$(".str").remove();
+				if (data=="") {
+					var tr = $("<tr class='str'></tr>");
+					var td = $("<td>没有查到你要的东西，滚吧</td>");
+					tr.append(td);
+					$("table").append(tr);
+				}
+				else{
+					for (var i in data) {
+						var tr = $("<tr class='str'></tr>");
+						var td1 = $("<td align='center' class='altbg2'>"
+								+ data[i].pid + "</td>");
+						var td2 = $("<td align='center' class='altbg2'>"
+								+ data[i].pname + "</td>")
+						var td3 = $("<td align='center' class='altbg2'>"
+								+ data[i].pflag + "</td>")
+						var td4 = $("<td align='center' class='altbg2'>"
+								+ data[i].ptype + "</td>")
+						var td5 = $("<td align='center' class='altbg2'>"
+								+ data[i].pprice + "</td>")
+						var td6 = $("<td align='center' class='altbg2'> <a href='' class='examine'>查看详细信息</a></td>")
+						tr.append(td1).append(td2).append(td3).append(td4)
+								.append(td5).append(td6);
+						$("table").append(tr);
+					}
+				}
+			}
+		})
+		return false;
+	})
+</script>
+</html>

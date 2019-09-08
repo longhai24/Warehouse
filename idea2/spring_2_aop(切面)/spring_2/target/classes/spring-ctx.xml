@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+	<!-- IOC -->
+	<bean id="dao" class="com.accp.t2.dao.PersonMyBatisDaoImpl"></bean>
+	<bean id="biz" class="com.accp.t2.biz.PersonBiz">
+		<property name="personDao" ref="dao"></property>
+	</bean>
+	<bean id="logger" class="com.accp.t2.aspect.LoggerAspect"></bean>
+	<bean id="trans" class="com.accp.t2.aspect.TransAspect"></bean>
+	<!-- AOP -->
+	<aop:config>
+		<!-- 定义切面 -->
+		<aop:aspect id="loggerA" ref="logger">
+			<!-- 定义切点，寻找委托对象 -->
+			<aop:pointcut expression="within(com.accp.t2.biz..*)" id="p1"/>
+			<!-- 定义通知，增强行为 -->
+			<aop:before method="doLogger" pointcut-ref="p1"/>
+		</aop:aspect>
+		<aop:aspect id="transA" ref="trans">
+			<aop:around method="doTrans" pointcut="execution(public * com.accp.t2.biz..*.add*(..)) or execution(public void com.accp.t2.biz.PersonBiz.removePerson())"/>
+		</aop:aspect>
+	</aop:config>
+</beans>

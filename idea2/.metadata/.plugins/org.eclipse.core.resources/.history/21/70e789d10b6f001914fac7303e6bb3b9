@@ -1,0 +1,14 @@
+package com.accp.test;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+public class Test {
+	@org.junit.Test
+	public void testSelect() {
+		SqlSessionFactoryBuilder ssfb = new SqlSessionFactoryBuilder();
+		SqlSessionFactory ssf = ssfb.build(Resources.getResourceAsStream("config.xml"));
+	}
+}

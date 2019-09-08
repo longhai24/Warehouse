@@ -1,0 +1,91 @@
+﻿package com.accp.mycommon.dao;
+
+import java.lang.reflect.Field;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.accp.annotation.Column;
+import com.accp.annotation.Table;
+
+@SuppressWarnings("all")
+public class CommonDao extends BaseDao {
+
+	public <T> List<T> SelAllColumn(Class<T> cls) {
+		ResultSet rs = null;
+		List<T> data;
+		String tblName = null;
+		try {
+			// 1.从类的元注解中获得表名
+			if (cls.isAnnotationPresent(Table.class)) {
+				// 获得指定元注解
+				Table tbl = cls.getDeclaredAnnotation(Table.class);
+				tblName = tbl.value();
+			}
+			rs = super.executeQuery("select * from " + tblName);
+			data = new ArrayList<T>();
+			// 2.从字段的元注解中获得列名
+			while (rs.next()) {
+				// 1.获得构造方法,并且实例化
+				Object obj = cls.newInstance();
+				// 2.获得属性，并且赋值
+				for (Field f : cls.getDeclaredFields()) {
+					if (f.isAnnotationPresent(Column.class)) {
+						Column column = f.getDeclaredAnnotation(Column.class);
+						f.setAccessible(true);
+						f.set(obj, rs.getObject(column.name()));
+					}
+				}
+				data.add((T) obj);
+			}
+			return data;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException ex) {
+				throw new RuntimeException(ex);
+			}
+		}
+	}
+
+	public int add(Object obj) {
+		String sql = "insert into %s(%s) values(%s)";
+		String tblName = null;
+		StringBuffer clName = new StringBuffer();
+		StringBuffer clValue = new StringBuffer();
+		try {
+			Class cls = obj.getClass();
+			// 1.从类的元注解中获得表名
+			if (cls.isAnnotationPresent(Table.class)) {
+				// 获得指定元注解
+				Table tbl = (Table) cls.getDeclaredAnnotation(Table.class);
+				tblName = tbl.value();
+			}
+			for (Field f : cls.getDeclaredFields()) {
+				f.setAccessible(true);
+				if (f.isAnnotationPresent(Column.class)) {
+					Column col = f.getDeclaredAnnotation(Column.class);
+					if (!col.isIdentity()) {
+						clName.append(col.name()).append(",");// 列名
+						if (col.type().equals("varchar")) {
+							clValue.append("'").append(f.get(obj)).append("',");
+						} else {
+							clValue.append(f.get(obj)).append(",");
+						} // 列值
+					}
+				}
+			}
+			// 移除最后一个逗号
+			clName.replace(clName.length() - 1, clName.length(), "");
+			clValue.replace(clValue.length() - 1, clValue.length(), "");
+			sql = String.format(sql, tblName, clName.toString(), clValue.toString());
+			return super.executeUpdate(sql);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+}

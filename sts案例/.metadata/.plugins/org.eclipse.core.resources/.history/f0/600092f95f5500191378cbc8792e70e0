@@ -1,0 +1,28 @@
+package com.accp.work1.util;
+
+import java.util.Comparator;
+
+import com.accp.work1.entity.Stu;
+
+/**
+ * 
+* <p>Title: MyComparator</p>  
+* <p>Description:排序方法 </p>  
+* @author Apple 
+
+* @date 2019年4月2日
+ */
+public class MyComparator implements Comparator<Stu> {
+
+	public int reverseOrder(Stu o1, Stu o2) {
+		return (Integer)(o1.getStuAge())-(Integer)(o2.getStuAge());
+		
+	}
+
+	@Override
+	public int compare(Stu o1, Stu o2) {
+		
+		return o2.getStuAge()-o1.getStuAge();
+	}
+	
+}

@@ -1,0 +1,104 @@
+
+<html>
+
+	<head>
+		<meta http-equiv="Content-Language" content="zh-cn">
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+		<title>商品-信息</title>
+		<link rel="stylesheet" type="text/css" href="../css/style_admin.css">
+		
+		
+	</head>
+
+	<body>
+		
+			<table cellspacing="1" cellpadding="4" width="100%"  align="left"
+				class="tableborder" id="table3">
+
+				<input type="hidden" name="action" value="update" />
+				<input type="hidden" name="productID" value="p001" />
+				<tr>
+					<td colspan="12" class="header">
+						商品信息
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						商品编号：
+					</td>
+					<td class="serialNumber">
+						p001
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						商品名称：
+					</td>
+					<td class="name">
+						苹果
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						商品商标：
+					</td>
+					<td class="brand">
+						hsss
+					</td>
+				</tr>	
+				<tr>
+					<td class="altbg1">
+						商品型号：
+					</td>
+					<td class="model">
+						1111111111111111
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						商品价格：
+					</td>
+					<td class="price">
+						12.3
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						商品图片：
+					</td>
+					<td class="altbg2">
+						<img src="../image/d_r11_10_r1_c81.jpg" name="img" width="100px" height="100px">
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						商品介绍：
+					</td>
+					<td class="description">
+						非常好吃
+					</td>
+				</tr>
+			</table>
+		</form>
+	</body>
+<script type="text/javascript" src="../static/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+//获取商品id
+var pid =window.sessionStorage.getItem("pid");
+$.ajax({
+	type:"post",
+	url:"/aiccse/c/goods?usr=selectPro",
+	dataType:"json",
+	data:{id:pid},
+	success:function(result){
+		$('.serialNumber').html(result.pid); //编号
+		$('.name').html(result.pname); //名称
+		$('.brand').html(result.pflag); //商标
+		$('.model').html(result.ptype);//型号
+		$('.price').html(result.pprice); //价格
+		$('[name="img"]').attr("src","../"+result.pimg);//图片
+		$('.description').html(result.description);//介绍
+	}
+});
+</script>
+</html>

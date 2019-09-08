@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="dao.IGoods">
+     	 <resultMap type="pojo.tb_bill" id="SelSome">
+ 	 	<!-- orm映射 -->
+ 	 	<id column="billno" property="billno" />
+ 	 	<result column="billdate" property="billdate"/>
+ 	 	<result column="suppliername" property="suppliername"/>
+ 	 	<result column="supplieraddress" property="supplieraddress"/>
+ 	 	<result column="department" property="department"/>
+ 	 	<result column="warehouse" property="warehouse"/>
+ 	 	<result column="buyer" property="buyer"/>
+ 	 	<result column="executor" property="executor"/>
+ 	 		<collection property="bill" column="billno" select="queryDetail"></collection>
+ 	 </resultMap>
+ 	 <select id="queryDetail" resultType="pojo.tb_detail">
+ 		select * from tb_detail where billno=#{selno}
+ 	</select>
+ 	 <select id="SelAllBillByBillno"  resultMap="SelSome">
+ 		select * from tb_bill where billno = #{selno}
+ 	</select>
+ 	
+ 	<delete id="DelByBillno">
+ 		delete from tb_detail where billno=#{delNo};
+ 		delete from tb_bill where billno=#{delNo}
+ 	</delete>
+    </mapper>

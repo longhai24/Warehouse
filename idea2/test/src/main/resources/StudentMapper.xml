@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.IstudentDao">
+	<delete id="delete">
+		delete from `student` where `sid` = #{sid}
+	</delete>
+	<update id="update">
+		UPDATE `student` SET `aid` = #{clazz} WHERE `sid` = #{sid}
+	</update>
+	<select id="selectClazzAll" resultType="com.accp.pojo.Student">
+		SELECT * FROM `student` WHERE `aid` = #{cid}
+	</select>
+	<select id="selectStudent" resultMap="selectStu">
+		SELECT * FROM `student` WHERE `sid` = #{sid}
+	</select>
+	<resultMap type="com.accp.pojo.Student" id="selectStu">
+
+		<association property="a" column="aid" select="queryPerson"></association>
+	</resultMap>
+	<select id="queryPerson" resultType="com.accp.pojo.Add">
+		select * from `add` where `id` = #{0}
+	</select>
+</mapper>

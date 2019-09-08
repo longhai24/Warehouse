@@ -1,0 +1,83 @@
+
+
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>管理员-添加</title>
+<link rel="stylesheet" type="text/css" href="../css/style_admin.css">
+
+</head>
+
+<body>
+	<form name="form1" action="addManager.jsp" method="post">
+		<table cellspacing="1" cellpadding="4" width="100%"
+			class="tableborder" id="table3">
+			<input type="hidden" name="action" value="save" />
+			<tr>
+				<td colspan="12" class="header">管理员-添加</td>
+			</tr>
+			<tr>
+				<td class="altbg1">管理员名称：</td>
+				<td class="altbg2" colspan="11"><input type="text"
+					name="userName" size="34"></td>
+			</tr>
+			<tr>
+				<td class="altbg1">密&nbsp; 码：</td>
+				<td class="altbg2" colspan="11"><input type="password"
+					name="password" size="34"></td>
+			</tr>
+			<tr>
+				<td class="altbg1">确认密码：</td>
+				<td class="altbg2" colspan="11"><input name="confirmpassword"
+					size="34" type="password"></td>
+			</tr>
+			<tr>
+				<td class="altbg1">角色：</td>
+				<td><select name="txtRole">
+						<option value="2">普通管理员</option>
+						<option value="3">用户</option>
+				</select></td>
+			</tr>
+			<tr>
+				<td class="altbg1"></td>
+				<td class="altbg2" colspan="11"><input id="sub" type="button" value="提交"
+					name="B1" onClick=""> &nbsp; <input
+					type="reset" value="重置" name="B2"></td>
+			</tr>
+		</table>
+	</form>
+</body>
+<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+	$("#sub").click(function() {
+		var aname = $(document.form1.userName).val();
+		var apwd = $(document.form1.password).val();
+		var capwd = $(document.form1.confirmpassword).val();
+		var arid = $("select").val();
+		var user = {username:aname,userpwd:apwd,rid:arid};
+		var i = JSON.stringify(user);
+		if (capwd ==apwd) {
+			$.ajax({
+				url:"http://localhost:8080/Goods/c/GoodsAction",
+				data:{method:"addUser",i:i},
+				type:"post",
+				dataType:"json",
+				success: function(data) {
+					if (data.fir=="200") {
+						alert(data.sec);
+						window.location.href="showUserList.html";
+					}
+					else{
+						alert(data.sec)
+					}
+				}
+			})
+		}else {
+			alert("请确认密码一致")
+		}
+		return false;
+	})
+</script>
+</html>

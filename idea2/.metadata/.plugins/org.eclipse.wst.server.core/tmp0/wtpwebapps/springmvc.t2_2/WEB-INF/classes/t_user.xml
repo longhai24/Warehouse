@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="com.tianxin.springmvc.t2_2.dao.TUserDAO">
+    <sql id="allS">
+    select * from 
+    </sql>
+    <select id="getTUser" resultType="tuser">
+    <include refid="allS"/> t_user2
+    <where>
+    <if test="tuser!=null">
+    <if test="tuser.usercode!=null and tuser.usercode!='' ">
+    usercode=#{tuser.usercode}
+    </if>
+    <if test="tuser.userpassword!=null and tuser.userpassword!='' ">
+    and  userpassword=#{tuser.userpassword}
+    </if>
+    </if>
+    </where>
+    </select>
+    </mapper>

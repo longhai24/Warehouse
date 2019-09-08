@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.t2.dao.IPersonDao">
+
+	<select id="queryAllPersons" resultType="person">
+		select * from
+		tbl_person
+	</select>
+
+	<select id="loadPersonByName" resultType="person">
+		select * from
+		tbl_person
+		where pname=#{name}
+	</select>
+
+	<delete id="deletePerson">
+		delete from tbl_address where apid=#{id};
+		delete from
+		tbl_person where pid=#{id};
+	</delete>
+
+	<insert id="savePerson" useGeneratedKeys="true" keyColumn="pid"
+		keyProperty="person.pid">
+		insert into tbl_person(pname,psex,pdate,pimg)
+		values(#{person.pname},#{person.psex},#{person.pdate,jdbcType=DATE},#{person.pimg})
+	</insert>
+
+</mapper>    

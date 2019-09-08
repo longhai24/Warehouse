@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.ICityDao">
+	<select id="findCity" resultType="District">
+		SELECT * FROM `district` WHERE `cid` = #{pid}
+	</select>
+	<select id="findStreet" resultType="Street">
+	select * FROM `street` where `did` = #{did}
+	</select>
+	<select id="findProvinces" resultMap="selectpp">
+		SELECT * FROM `province`
+	</select>
+	<resultMap type="Province" id="selectpp">
+		<collection property="citys" column="pid" select="pldfd"/>
+	</resultMap>
+	<select id="pldfd" resultType="City">
+		SELECT * FROM `city` WHERE `pid` = #{0}
+	</select>
+</mapper>

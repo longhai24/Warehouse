@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 1.采用接口模式   namespace:接口的完整限定名-->
+ <mapper namespace="com.accp.t2.dao.IPersonDao">
+ 
+ 	 <!-- type:pojo的完整限定名 -->
+ 	 <resultMap type="com.accp.t2.pojo.Person" id="personMap">
+ 	 	<!-- orm映射 -->
+ 	 	<id column="pid" property="personId" />
+ 	 	<result column="pname" property="personName"/>
+ 	 	<result column="psex" property="personSex"/>
+ 	 	<result column="pdate" property="personDate"/>
+ 	 	<result column="pimg" property="personImg"/>
+ 	 	<!-- 关联关系映射 
+ 	 		column:查询列
+ 	 		select:查询方法=查询sql
+ 	 	-->
+ 	 	<collection property="addresses" column="pid" select="queryAddress"></collection>
+ 	 </resultMap>
+ 	 
+ 	<select id="queryAddress" resultType="com.accp.t2.pojo.Address">
+ 		select * from tbl_address where apid=#{0}
+ 	</select>
+ 
+ 	<!--2. id:必须为方法名
+ 		   resultMap:必须为自定义resultMap的id
+ 	 -->
+ 	<select id="queryAllPersonWithAddress"  resultMap="personMap">
+ 		select * from tbl_person
+ 	</select>
+ 	
+ 	
+ 	
+ 	 <resultMap type="com.accp.t2.pojo.Address" id="addressMap">
+ 	 	<!-- orm映射 -->
+ 	 	<id column="aid" property="aid" />
+ 	 	<result column="aname" property="aname"/>
+ 	 	<result column="atel" property="atel"/>
+ 	 	<!-- 关联关系映射 
+ 	 		column:查询列
+ 	 		select:查询方法=查询sql
+ 	 	-->
+ 	 	<association property="person" column="apid" select="queryPerson"></association>
+ 	 </resultMap>
+ 	 
+ 	 <select id="queryPerson" resultMap="personMap">
+ 		select * from tbl_person where pid=#{0}
+ 	</select>
+ 	
+ 	<select id="queryAllAdressWithPerson"  resultMap="addressMap">
+ 		select * from tbl_address 
+ 	</select>
+ 	
+ 	<!-- 命名参数 -->
+ 	<select id="queryPersonsByLike" resultMap="personMap">
+ 		select * from tbl_person where pname like '${name}%'
+ 	</select>
+ 	
+ 	
+ 	<delete id="deletePersonById">
+ 		delete from tbl_address where apid=#{pid};
+ 		delete from tbl_person where pid=#{pid}
+ 	</delete>
+ 	
+ </mapper>   

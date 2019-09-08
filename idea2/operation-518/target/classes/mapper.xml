@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.dao.IDao">
+	<select id="finds" resultMap="findss">
+		select * from `air_quality_index`
+	</select>
+	<resultMap type="Air_quality_index" id="findss">
+		<association property="district_id" column="district_id" select="selectUser"></association>
+	</resultMap>
+	<select id="selectUser" resultType="District">
+		SELECT * FROM `district` WHERE `id` = #{0}
+	</select>
+	<select id="findDiss" resultType="District">
+		SELECT * FROM `district`
+	</select>
+	<insert id="add">
+		INSERT INTO `air_quality_index` (`district_id`,`monitor_time`,`pm10`,`pm25`,`monitoring_station`)
+		values(#{v.id},#{v.time},#{v.p10},#{v.p25},#{v.zhan})
+	</insert>
+	<select id="like" resultMap="findss">
+		SELECT * FROM `air_quality_index` WHERE `district_id` LIKE '%${id}%'
+	</select>
+	<select id="a" resultMap="findss">
+		select * from `air_quality_index` where id = #{id}
+	</select>
+	<update id="uio">
+		UPDATE `air_quality_index` SET `district_id` = #{v.id},`monitor_time`=#{v.time},`pm10`=#{v.p10},`pm25`=#{v.p25},`monitoring_station`=#{v.zhan} WHERE `id` = #{lp}
+	</update>
+	<delete id="delk">
+		DELETE FROM `air_quality_index` WHERE `id` = #{id}
+	</delete>
+</mapper>    

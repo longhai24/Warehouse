@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.IHouseDao">
+	<select id="findHouses" resultMap="selectHouse">
+		SELECT * FROM `house` WHERE `uid` = #{u.uid}
+	</select>
+	<resultMap type="House" id="selectHouse">
+		<association property="Htype" column="tid" select="selectType"></association>
+		<association property="u" column="uid" select="selectUser"></association>
+<!-- 		查询位置区 -->
+		<association property="pla" column="sid" select="selectSid"></association>
+	</resultMap>
+	<select id="selectType" resultType="HouseType">
+		SELECT * FROM `housetype` WHERE `tid` = #{0}
+	</select>
+	<select id="selectUser" resultType="user">
+		SELECT * FROM `user` WHERE `uid` =#{0}
+	</select>
+	<select id="selectSid" resultType="com.accp.vo.PlacevO">
+		select d.`dname`,d.`did`,s.`sname`,s.`sid` from `street` as s inner join `district` as d on s.`did` = d.`did` where s.`sid`= #{0}
+	</select>
+	<select id="findHouseType" resultType="HouseType">
+		select * from `housetype`
+	</select>
+	<insert id="addHouse">
+		INSERT INTO `house` (`htitle`,`tid`,`hacreage`,`hprice`,`htime`,`sid`,`hdetails`,`hphone`,`uid`,`himg`)
+		VALUES(#{h.title},#{h.type_id},#{h.floorage},#{h.price},#{h.houseDate},#{h.street_id},#{h.description},#{h.contact},#{h.u.uid},#{h.himg})
+	</insert>
+<!-- 	查询单个房子 -->
+	<select id="findHouse" resultMap="selectHouse">
+		SELECT * FROM `house` WHERE `hid`= #{hid}
+	</select>
+<!-- 	搜索房子 -->
+	<select id="likeHouses" resultMap="selectHouse">
+		SELECT * FROM `house`
+		<where>
+			<if test="l.name!=null and l.name!=''">
+				and `htitle` LIKE '%${l.name}%'
+			</if>
+			<if test="l.minprice != null and l.minprice != ''">
+				AND `hprice` &gt;= #{l.minprice}
+			</if>
+			<if test="l.maxprice != null and l.maxprice != ''">
+				 AND `hprice` &lt;= #{l.maxprice}
+			</if>
+			<choose>
+				<when test="l.street == null or l.street == ''">
+					AND `sid` IN (SELECT `sid` FROM `street` WHERE `sid` IN (SELECT `did` FROM `district` WHERE `cid` = #{l.place}))
+				</when>
+				<otherwise>
+					AND `sid` = #{l.street}
+				</otherwise>
+			</choose>
+			<if test="l.htype != null and l.htype != ''">
+				and `tid` = #{l.htype}
+			</if>
+			<if test="l.acreage != null and l.acreage != ''">
+				AND `hacreage` = #{l.acreage}
+			</if>
+		</where>
+	</select>
+	<delete id="removeHouse">
+		DELETE FROM `house` WHERE `hid` = #{hid}
+	</delete>
+	<update id="modifyHouse">
+		update `house`
+		<set>
+			<if test="h.title != null and h.title != ''">
+				`htitle` = #{h.title},
+			</if>
+			<if test="h.type_id!= null and h.type_id != ''">
+				`tid` = #{h.type_id},
+			</if>
+			<if test="h.floorage != null and h.floorage != ''">
+				`hacreage` = #{h.floorage},
+			</if>
+			<if test="h.price != null and h.price != ''">
+				`hprice`=#{h.price},
+			</if>
+			<if test="h.houseDate != null and h.houseDate != ''">
+				`htime`=#{h.houseDate},
+			</if>
+			<if test="h.street_id != null and h.street_id != ''">
+				`sid`=#{h.street_id},
+			</if>
+			<if test="h.description != null and h.description != ''">
+				`hdetails`=#{h.description},
+			</if>
+			<if test="h.himg != null and h.himg != ''">
+				`himg`=#{h.himg},
+			</if>
+			<if test="h.contact != null and h.contact != ''">
+				`hphone`=#{h.contact}
+			</if>
+		</set>
+			WHERE`hid` =#{hid}
+	</update>
+<!-- 	<resultMap type="Street" id="selectsi"> -->
+<!-- 		<association property="d" column="did" select="selectDis"></association> -->
+<!-- 	</resultMap> -->
+<!-- 	查询位置区返回继续查询市 -->
+<!-- 	<select id="selectDis" resultType="District">  -->
+<!-- 		select * from `district` where `did` = #{0} -->
+<!-- 	</select> -->
+<!-- 	查询市resultmap -->
+<!-- 	<resultMap type="District" id="selectdi"> -->
+<!-- 		<association property="c" column="cid" select="selectC"></association> -->
+<!-- 	</resultMap> -->
+<!-- 	查询市select --> 
+<!-- 	<select id="selectC" resultType="City"> -->
+<!-- 		SELECT * FROM `city` WHERE `cid` = #{0} -->
+<!-- 	</select> -->
+</mapper>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<title>会员信息更新</title>
+
+
+<style>
+a:hover {
+	color: red;
+}
+</style>
+
+</head>
+
+<body>
+	<h1>会员信息</h1>
+	<!-- disabled="disabled" -->
+	会员名:<input type="text" name="txtName" id="txtName"  />
+	<br /> 
+	密&nbsp;&nbsp;码:<input type="password" name="txtPwd" id="txtPwd" />
+	<br /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<a id="updateMember" href="javascript:void(0)"
+		style="text-decoration:none;font-size:20px;">更新</a>
+</body>
+
+<script src="../js/jquery-1.12.4.js"></script>
+<script>
+	subName=window.sessionStorage.getItem("name");
+	if(subName){
+		$.getJSON("/ajax_2/member",{m:"load",name:subName},function(data){
+			$("#txtName").val(data.userName);
+			$("#txtPwd").val(data.userPwd);
+		});
+	}
+
+	$("#updateMember").click(function(){
+		//组装json格式
+		var member={};
+		//必须与实体类中的属性名一致
+		member["userName"]=$.trim($("#txtName").val());
+		member["userPwd"]=$.trim($("#txtPwd").val());
+		//发送ajax请求   JSON.stringify(member) 非常重要 序列化
+		$.post("/ajax_2/member",{m:"update",jsonStr:JSON.stringify(member)},function(data){
+			if(data.code=="200"){
+				alert("更新成功");
+				
+			}else if(data.code=="500"){
+				alert(data.msg);
+			}
+		},"json");
+	})
+</script>
+</html>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace:命名空间【非常重要】，必填,类的完整限定名 -->
+<mapper namespace="com.accp.dao.lq">
+	<!-- id:方法名称 resultType:结果集类型，主要是指一行的类型 -->
+	<select id="queryAll" resultType="com.accp.entity.Tbl_Message">
+		select * from tbl_message
+	</select>
+	<!-- #{0}:代表可选参数 -->
+	<select id="load" resultType="com.accp.entity.Person"
+		parameterType="int">
+		select * from tbl_person
+		where pid=#{0}
+	</select>
+
+	<!-- < > 要转义 -->
+	<select id="queryCount" resultType="long">
+		select count(*) from
+		tbl_person
+		where EXTRACT(year from now())-EXTRACT(year from
+		pdate)&lt;18
+	</select>
+
+	<!-- #{key} 用于map参数 -->
+	<select id="queryLike" resultType="com.accp.entity.Person" parameterType="map">
+		select * from tbl_person
+		where pname like '${name}%' and psex=#{sex}
+	</select>
+
+	<!-- ================================================================================= -->
+	<!-- #{属性名} 用于对象类型参数 -->
+	<insert id="into" parameterType="com.accp.entity.Tbl_Message">
+		insert into tbl_message(`userName`,`title`,`contents`,`createTime`)
+		values(#{userName},#{title},#{contents},#{createTime,jdbcType=DATE})
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+		delete from tbl_person where pid=#{0}
+	</delete>
+
+
+</mapper> 

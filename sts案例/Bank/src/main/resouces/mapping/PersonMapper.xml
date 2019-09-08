@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tx.Bank.dao.IBank">
+	<sql id="sel">select * from</sql>
+	<select id="SelUser" resultType="account">
+		<include refid="sel"></include>
+		account where status=1 and password =#{password} and cardno =#{cardno}
+	</select>
+	<update id="modifyBalanceReduce">
+	UPDATE `account` SET `balance` =balance-#{money} WHERE `cardno` =#{card}
+	</update>
+		<update id="modifyBalanceAddition">
+	UPDATE `account` SET `balance` =`balance`+#{money} WHERE `cardno` =#{card}
+	</update>
+	<select id="SelBalance" resultType="int">
+	 SELECT `balance` FROM `account` WHERE `cardno` =#{cardno}
+	</select>
+	
+	<select id="SelLog" resultType="transaction_record">
+	SELECT * FROM `transaction_record` WHERE `transaction_date` BETWEEN #{date1} AND #{date2}
+	</select>
+	<update id="modifyPwd">
+	UPDATE `account` SET `password` =#{newpas} WHERE `cardno` =#{user}and password=#{oldpwd}
+	</update>
+</mapper>    

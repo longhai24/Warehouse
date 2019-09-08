@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="/Test4.19/GoodsAction" method="post">
+		商品名称<input type="text"> 商品型号<input id="type" type="text">
+		商品分类<select></select> 商品单价<input id="price" type="text"> <input
+			id="sub1" type="submit">
+	</form>
+</body>
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript">
+	$.ajax({
+		url:"/Test4.19/GoodsAction",
+		type:"post",
+		dataType:"json",
+		data:{method:"clazz"},
+		success: function(data) {
+			for ( var i in data) {
+				var op1 = $("<option value='"+data[i].goodsClassId+"'>"+data[i].goodsClassName+"</option>");
+				$("select").append(op1);
+			}
+		}
+		
+	})
+	
+	var check = window.sessionStorage.getItem("io1")
+	alert(check)
+	if check !="ok"){
+		$("#sub1").click(function() {
+			var gname = $("input").eq(0).val();
+			var gtype = $("#type").val();
+			var gclazz = $("select").val();
+			var gprice = $("#price").val();
+			alert(gprice)
+			var i ={ goodsName:gname,
+			goodsClassId:gclazz,
+			goodsType:gtype,
+			goodsPrice:gprice,
+			goodsId:sessionStorage.getItem("uid")
+			}
+			var no = JSON.stringify(i);
+			$.ajax({
+			url:"/Test4.19/GoodsAction",
+			type:"post",
+			dataType:"json",
+			data:{
+				no:no,
+				method:"update"
+			},
+			success:function(data){
+				if (data.fir =="200") {
+					alert(data.sec);
+					window.location.href="Sel.html"
+				}
+				else{
+					alert(data.sec)
+				}
+		}
+	}
+	
+		})
+		return false;
+	}
+	if (check =="ok") {
+		window.sessionStorage.setItem("io1","null");
+		$("#sub1").click(function() {
+			var gname = $("input").eq(0).val();
+			var gtype = $("#type").val();
+			var gclazz = $("select").val();
+			var gprice = $("#price").val();
+			alert(gprice)
+			var i ={ goodsName:gname,
+			goodsClassId:gclazz,
+			goodsType:gtype,
+			goodsPrice:gprice}
+			var no = JSON.stringify(i);
+			$.ajax({
+			url:"/Test4.19/GoodsAction",
+			type:"post",
+			dataType:"json",
+			data:{
+				no:no,
+				method:"add"
+			},
+			success:function(data){
+				if (data.fir =="200") {
+					alert(data.sec);
+					window.location.href="Sel.html"
+				}
+				else{
+					alert(data.sec)
+				}
+		}
+	}
+	
+		})
+		return false;
+	})
+	</script>
+</html>

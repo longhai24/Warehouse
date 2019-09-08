@@ -1,0 +1,8 @@
+package com.accp.Test.entity;
+
+import com.accp.Test.annotation.Column;
+
+public class Stu {
+	@Column(name="id",isPrimaryKey=true)
+	private int id_;
+}

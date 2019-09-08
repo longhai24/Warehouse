@@ -1,0 +1,22 @@
+package com.accp.T1.test;
+
+import java.lang.annotation.Annotation;
+
+import com.accp.T1.annotation.runs;
+import com.accp.T1.entity.user;
+
+public class test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		user use = new user(1,"ÕÅÈý","ÄÐ","ºþÄÏ");
+		Class cls = use.getClass();
+		/*for (Annotation c : cls.getAnnotations()) {
+			 
+		}*/
+		if(cls.isAnnotationPresent(runs.class)) {
+			runs =  cls.getAnnotation(runs.class)
+		}
+	}
+
+}

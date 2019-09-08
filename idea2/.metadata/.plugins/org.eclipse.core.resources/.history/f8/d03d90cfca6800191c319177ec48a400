@@ -1,0 +1,21 @@
+package com.accp.test;
+
+import java.util.List;
+
+import com.accp.biz.TestBiz;
+import com.accp.entity.Type;
+import com.accp.entity.peitems;
+
+public class test_01 {
+	public static <E> void main(String[] args) {
+		TestBiz biz = new TestBiz();
+		List<Type> list = biz.selecttype(Type.class);
+		for (Type t : list) {
+			System.out.println(t.getTypename());
+		}
+		List<peitems> list1 = biz.selecttype(peitems.class);
+		for (peitems t : list1) {
+			System.out.println(t.getItemname());
+		}
+	}
+}

@@ -1,0 +1,18 @@
+package com.accp.T1.test;
+
+import java.lang.annotation.Annotation;
+
+import com.accp.T1.entity.user;
+
+public class test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		user use = new user(1,"ÕÅÈı","ÄĞ","ºşÄÏ");
+		Class cls = use.getClass();
+		for (Annotation c : cls.getAnnotations()) {
+			
+		}
+	}
+
+}

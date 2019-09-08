@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="com.tianxin.springmvc.t2_2.dao.TPaperDAO">
+    <sql id="allS">select * from</sql>
+     <sql id="allD">delete from</sql>
+     <!--查询类型  -->
+     <select id="getTCode" resultType="tcode">
+     <include refid="allS"/>
+     t_code2
+     </select>
+     <!-- 查询论文 -->
+     <select id="getTPaper" resultType="tpapervo">
+     SELECT 
+	p.*,c.`codeTypeName`,
+	c.`id` AS cid,
+	u1.`userCode` AS cucode,
+	u1.`userName` AS cuname,
+	u2.`userCode` AS mucode,
+	u2.`userName` AS muname
+	FROM `t_paper2` AS p
+	JOIN `t_code2` AS c	
+	ON p.`type`=c.`id`
+	JOIN `t_user2` AS u1
+	ON u1.`userCode`=p.`createdBy`
+	LEFT JOIN `t_user2` AS u2
+	ON u2.`userCode`=p.`modifyBy`
+     <where>
+     <if test="tpapervo.id!=null">
+     p.id=CONCAT(${tpapervo.id})
+     </if>
+     <if test="tpapervo.title!=null and tpapervo.title!='' ">
+     <if test="method==1">
+     and title like CONCAT('%',#{tpapervo.title,jdbcType=VARCHAR},'%')
+     </if>
+     <if test="method==2">
+     and title = CONCAT(#{tpapervo.title,jdbcType=VARCHAR})
+     </if>
+     </if>
+     <if test="tpapervo.cid!=null">
+     and type=CONCAT(${tpapervo.cid})
+     </if>
+     </where>
+     
+     </select>
+     
+     <!--添加论文  -->
+     <insert id="addTPaper">
+     INSERT `t_paper2`(`title`,`type`,`paperSummary`,
+     `paperPath`,`createdBy`,`creationDate`,`fileName`)
+     VALUES(CONCAT(#{tpapervo.title,jdbcType=VARCHAR}),
+     CONCAT(${tpapervo.cid}),CONCAT(#{tpapervo.papersummary,jdbcType=VARCHAR}),CONCAT(#{tpapervo.paperpath,jdbcType=VARCHAR}),
+    CONCAT(#{tpapervo.cucode,jdbcType=VARCHAR}),CURRENT_TIMESTAMP,CONCAT(#{tpapervo.filename,jdbcType=VARCHAR})
+     )
+     </insert>
+    
+    <!-- 修改论文 -->
+    <update id="modifyTPaper">
+    update `t_paper2` 
+    <set>
+    <if test="tpapervo.title!=null and tpapervo.title!='' ">
+    title=CONCAT(#{tpapervo.title,jdbcType=VARCHAR}),
+    </if>
+    <if test="tpapervo.cid!=null">
+    type=CONCAT(${tpapervo.cid}),
+    </if>
+    <if test="tpapervo.papersummary!=null and tpapervo.papersummary!='' ">
+    paperSummary=CONCAT(#{tpapervo.papersummary,jdbcType=VARCHAR}),
+    </if>
+    <if test="tpapervo.paperpath!=null and tpapervo.paperpath!='' ">
+    paperpath=CONCAT(#{tpapervo.paperpath,jdbcType=VARCHAR}),
+    </if>
+    <if test="tpapervo.filename!=null and tpapervo.filename!='' ">
+    filename=CONCAT(#{tpapervo.filename,jdbcType=VARCHAR}),
+    </if>
+    `modifyBy`=CONCAT(#{tpapervo.mucode,jdbcType=VARCHAR}), 
+    modifydate=CURRENT_TIMESTAMP
+    </set>
+    where id=CONCAT(${tpapervo.id})
+    </update>
+    
+    <delete id="removeTPaper">
+    <include refid="allD"/>
+        `t_paper2`  where id=${id}
+    </delete>
+    
+    </mapper>

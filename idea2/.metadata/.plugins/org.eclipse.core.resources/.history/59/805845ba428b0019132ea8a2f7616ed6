@@ -1,0 +1,33 @@
+package com.tianxin.springmvc.t2_2.action;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.tianxin.springmvc.t2_2.biz.TUserBiz;
+import com.tianxin.springmvc.t2_2.pojo.TUser;
+@RequestMapping("/user")
+@Controller
+public class TUserAction {
+	
+	@Resource
+	private TUserBiz biz;
+	@RequestMapping("login")
+	public String login(TUser tuser,HttpSession session) {
+		TUser u=biz.getTUser(tuser);
+		if(u==null) {
+			return "redirect:/user/index";
+		}else {
+			session.setAttribute("USER", u);
+			return "redirect:/paper/toManage";
+		}
+	}
+	@RequestMapping("index")
+	public String toIndex() {
+		return "login";
+	}
+	
+
+}

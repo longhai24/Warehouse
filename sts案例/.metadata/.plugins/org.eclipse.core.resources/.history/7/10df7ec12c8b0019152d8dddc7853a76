@@ -1,0 +1,130 @@
+package com.tianxin.springmvc.t2_2.action;
+
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.tianxin.springmvc.t2_2.biz.TPaperBiz;
+import com.tianxin.springmvc.t2_2.pojo.TUser;
+import com.tianxin.springmvc.t2_2.vo.TPaperVo;
+
+@RequestMapping("/paper")
+@Controller
+public class TPaperAction {
+	@Resource
+	private TPaperBiz biz;
+	//根据条件查询论文
+	@RequestMapping("managePaper")
+	public String manage(Integer currentPage,Integer RD,TPaperVo tpapervo,Model model) {
+		model.addAttribute("CODE_LIST", biz.getTCode());
+		PageHelper.startPage(currentPage, 2);
+		PageInfo<TPaperVo> page=new PageInfo<>(biz.getTPaper(tpapervo, 1));
+		model.addAttribute("PAGE", page);
+		model.addAttribute("paramPaper", tpapervo);
+		model.addAttribute("RD", RD);
+		return "manage";
+	}
+	//跳转到管理首页面
+	@RequestMapping("toManage")
+	public String toManage() {
+		return "manage";
+	}
+	//跳转到添加论文页面
+	@RequestMapping("toAddPaper")
+	public String toAddPaper(Model model) {
+		model.addAttribute("CODE_LIST", biz.getTCode());
+		return "addPaper";
+	}
+	//添加论文
+	//跳转到添加论文页面
+	@RequestMapping("addPaper")
+	public String addPaper(TPaperVo tpapervo,MultipartFile filename2,HttpSession session) {
+		
+		
+		System.out.println(filename2.getName());//字段名称
+		try {
+			if(filename2.getOriginalFilename()!=null&&! filename2.getOriginalFilename().equals("")) {
+				String exFileName=filename2.getOriginalFilename().substring(filename2.getOriginalFilename().lastIndexOf("."));
+				String fileName=UUID.randomUUID().toString().replace("-", "")+exFileName;
+				//获得真实路径
+				filename2.transferTo(new File(session.getServletContext().getRealPath("/static")+"/images/"+fileName));
+				tpapervo.setPaperpath(session.getServletContext().getRealPath("/static")+"/images/");
+				tpapervo.setFilename(fileName);
+			}
+			
+			TUser u=(TUser)session.getAttribute("USER");
+			tpapervo.setCucode(u.getUsercode());
+			biz.addTPaper(tpapervo);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return "redirect:/paper/toManage";
+	}
+	//验证论文题目
+	@RequestMapping("checkPaper")
+	@ResponseBody
+	public String checkPaper(TPaperVo tpapervo) {
+		List<TPaperVo> list=biz.getTPaper(tpapervo, 2);
+		if(list!=null&&list.size()>0) {
+			return "NO";
+		}else{
+			return "OK";
+		}
+	}
+	//删除 论文
+	@RequestMapping("removePaper")
+	public String removePaper(Integer id) {
+		biz.removeTPaper(id);
+		return "redirect:/paper/toManage";
+	}
+	//去修改论文
+	@RequestMapping("toModify")
+	public String toModify(Integer id,Model model) {
+		TPaperVo t=new TPaperVo();
+		t.setId(id);
+		List<TPaperVo> list= biz.getTPaper(t, null);
+		model.addAttribute("PAPER", list.get(0));
+		model.addAttribute("CODE_LIST", biz.getTCode());
+		return "modifyPaper";
+	}
+	
+	//修改论文
+	@RequestMapping("modifyPaper")
+	public String modifyPaper(TPaperVo tpapervo,MultipartFile filename2,HttpSession session) {
+		
+		
+		System.out.println(filename2.getName());//字段名称
+		try {
+			
+			if(filename2.getOriginalFilename()!=null&&! filename2.getOriginalFilename().equals("")) {
+				String exFileName=filename2.getOriginalFilename().substring(filename2.getOriginalFilename().lastIndexOf("."));
+				String fileName=UUID.randomUUID().toString().replace("-", "")+exFileName;
+				//获得真实路径
+				filename2.transferTo(new File(session.getServletContext().getRealPath("/static")+"/images/"+fileName));
+				tpapervo.setPaperpath(session.getServletContext().getRealPath("/static")+"/images/");
+				tpapervo.setFilename(fileName);
+			}//获得真实路径
+			//filename2.transferTo(new File(session.getServletContext().getRealPath("/static")+"/images/"+fileName));
+			TUser u=(TUser)session.getAttribute("USER");
+			tpapervo.setMucode(u.getUsercode());
+			System.out.println(tpapervo);
+			biz.modifyTPaper(tpapervo);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return "redirect:/paper/toManage";
+	}
+
+}

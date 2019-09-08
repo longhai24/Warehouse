@@ -1,0 +1,16 @@
+eclipse.preferences.version=1
+encoding//WebContent/ui/addManager.html=UTF-8
+encoding//WebContent/ui/addProduct.html=UTF-8
+encoding//WebContent/ui/index.html=UTF-8
+encoding//WebContent/ui/info.html=UTF-8
+encoding//WebContent/ui/left.html=UTF-8
+encoding//WebContent/ui/listProduct.html=UTF-8
+encoding//WebContent/ui/login.html=UTF-8
+encoding//WebContent/ui/manageProduct.html=UTF-8
+encoding//WebContent/ui/right.html=UTF-8
+encoding//WebContent/ui/showUserList.html=UTF-8
+encoding//WebContent/ui/updateManager.html=UTF-8
+encoding//WebContent/ui/updateProduct.html=UTF-8
+encoding//src/cpm/accp/ping/dao/BaseDao.java=UTF-8
+encoding//src/cpm/accp/ping/util/MyTask.java=UTF-8
+encoding/<project>=UTF-8

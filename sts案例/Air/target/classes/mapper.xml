@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.IAirDao">
+	<sql id="sel">
+		select * from
+	</sql>
+	<select id="SelAll" resultType="air_quality_index">
+		<include refid="sel"></include>
+		`air_quality_index` AS a
+		JOIN `district` AS d
+		ON d.`id`=a.`district_id`
+	</select>
+	<insert id="addAir">
+		INSERT INTO
+		`air_quality_index`(`district_id`,`monitor_time`,`pm10`,`pm2_5`,`monitoring_station`,`last_modify_time`)
+		VALUES
+		(#{air.district_id},#{air.monitor_time},#{air.pm10},#{air.pm2_5},#{air.monitoring_station},NOW())
+	</insert>
+	<select id="SelSome" resultType="air_quality_index">
+		<include refid="sel"></include>
+		`air_quality_index` AS a
+		JOIN `district` AS d
+		ON d.`id`=a.`district_id`
+		where a.id=#{sid}
+	</select>
+	<delete id="removeAir">
+		delete from air_quality_index where id = #{did}
+	</delete>
+
+	<update id="modifyAir">
+		UPDATE `air_quality_index` SET `monitor_time` = #{b.monitor_time},`pm10` =#{b.pm10} ,`pm2_5` =#{b.pm2_5}
+		,`monitoring_station` = #{b.monitoring_station},`last_modify_time` = NOW() where id = #{b.id}
+	</update>
+	<select id="SelAA" resultType="air_quality_index">
+		<include refid="sel"></include>
+		`air_quality_index` AS a
+		JOIN `district` AS d
+		ON d.`id`=a.`district_id`
+		where district_id=#{AAA}
+	</select>
+</mapper>                                                                                                                            

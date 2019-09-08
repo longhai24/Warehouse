@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespacs:命名空间 必填 -->
+<mapper namespace="com.accp.dao.IPlq">
+	<!-- id :方法名称 唯一 resultType :结果集类型:主要指一行类型 -->
+	<select id="select" resultType="map">
+		SELECT * FROM `book`
+	</select>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IPlane">
+	<sql id="bySel">
+		select * from
+	</sql>
+	<select id="SelAll" resultType="plane">
+		<include refid="bySel"></include>
+		Plane
+	</select>
+
+	<select id="SelSomebyDate" resultType="plane">
+		<include refid="bySel"></include>
+		Plane where flight_date = #{date}
+	</select>
+	<select id="SelSomebyAddress" resultType="plane">
+		<include refid="bySel"></include>
+		Plane where destination = #{address}
+	</select>
+	<delete id="Del" parameterType="int">
+		delete from plane where id=#{did}
+	</delete>
+	<update id="Update" parameterType="plane">
+		update plane set
+		flight_number=#{uplane.flight_number},destination=#{uplane.destination},flight_date=#{uplane.flight_date} where
+		id=#{uplane.id}
+	</update>
+
+</mapper>

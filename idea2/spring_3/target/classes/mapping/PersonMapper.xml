@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.t3.dao.IPersonDao">
+
+	<resultMap type="person" id="personJoinMap">
+		<id column="pid" property="pid" />
+		<result column="pname" property="pname" />
+		<result column="psex" property="psex" />
+		<result column="pdate" property="pdate" />
+		<result column="pimg" property="pimg" />
+		<collection property="addresses" ofType="address">
+			<id column="aid" property="aid" />
+			<result column="atel" property="atel" />
+			<result column="aname" property="aname" />
+		</collection>
+	</resultMap>
+	<select id="loadPerson" resultMap="personJoinMap">
+		select * from
+		tbl_person p
+		left
+		join tbl_address a
+		on
+		p.pid=a.apid
+		where p.pid=#{id}
+	</select>
+
+	<select id="queryAllPersons" resultType="person">
+		select * from
+		tbl_person
+	</select>
+
+	<delete id="deletePerson">
+		delete from tbl_address where apid=#{id};
+		delete from
+		tbl_person where pid=#{id};
+	</delete>
+
+</mapper>    

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.3.xsd">
+	<bean id="liqi" p:name="张三" p:sex="男" p:time="2019-12-456" class="com.acpp.pojo.staff">
+		<property name="interest">
+			<list>
+				<value>文友</value>
+				<value>打蓝鳍</value>
+				<value>吃鲨鱼</value>
+				<value>骑水母</value>
+			</list>
+		</property>
+	</bean>
+	
+	
+	<bean id="test2" class="com.acpp.biz.TestBizImpl">
+		<property name="dao" ref="dao"></property>
+	</bean>
+	<bean id="dao" class="com.acpp.dao.TestDaoImpl"></bean>
+</beans>

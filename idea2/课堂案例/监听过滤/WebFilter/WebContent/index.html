@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>主页</title>
+</head>
+
+<body>
+	<div>
+
+		<h1 align="center">
+			欢迎<span style="color: red;">【XXX】</span>会员登录成功,在线人数(<span
+				style="color: red;">【XXX】</span>)
+		</h1>
+		<a href="info.html">商品列表页面</a>&nbsp;&nbsp;&nbsp; <a
+			href="/WebFilter/c/user?m=loginout">注销</a>
+	</div>
+</body>
+<script src="js/jquery-1.12.4.js"></script>
+
+<script>
+	//全局设置
+	$.ajaxSetup({
+		timeout : 6000
+	});
+
+	$(document).ajaxError(function() {
+		alert("服务器正忙.....");
+	});
+
+	$.getJSON("/WebFilter/c/user", {
+		"m" : "getMember"
+	}, function(json) {
+		$("h1>span:eq(0)").text(json.userName);
+	});
+	
+	//获得在线人数
+	$.get("/WebFilter/c/user", {
+		"m" : "getCount"
+	}, function(txt) {
+		$("h1>span:eq(1)").text(txt);
+	},"text");
+</script>
+</html>

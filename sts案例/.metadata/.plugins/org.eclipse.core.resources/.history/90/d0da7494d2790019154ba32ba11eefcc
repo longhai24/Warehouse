@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.IHouse">
+	<sql id="sel">
+		select * from
+	</sql>
+	<select id="SelUser" resultType="user">
+		<include refid="sel" />
+		user where user_account = #{acc} and user_password=#{pwd}
+	</select>
+	<insert id="addUser">
+		insert into user
+		(user_account,user_password,user_name,user_phone) values
+		(#{user.user_account},#{user.user_password},#{user.user_name},#{user.user_phone})
+	</insert>
+	<select id="SelAllHouse" resultType="Houseio">
+		SELECT h.`house_id` AS
+		hid,h.house_title AS htit,m.`type_name` AS
+		mname,h.House_price AS
+		hpri,h.House_info AS hinf,h.House_phone AS hpho,h.house_pic AS hpic
+		FROM house AS h
+		LEFT JOIN `type` AS m
+		ON h.type_id =m.`type_id`
+	</select>
+	<select id="SelMyHouse" resultType="Houseio">
+		SELECT h.`house_id` AS
+		hid,h.house_title AS htit,m.`type_name` AS
+		mname,h.House_price AS
+		hpri,h.House_info AS hinf,h.House_phone AS hpho,h.house_pic AS hpic
+		FROM house AS h
+		LEFT JOIN `type` AS m
+		ON h.type_id =m.`type_id`
+		where
+		User_id = #{uid}
+	</select>
+	<select id="SelAllType" resultType="type">
+		<include refid="sel"></include>
+		type
+	</select>
+	<select id="SelAllPro" resultType="province">
+		<include refid="sel"></include>
+		province
+	</select>
+	<select id="SelDowBy" resultType="downtown">
+		<include refid="sel"></include>
+		`downtown` WHERE `province_id` =#{proid}
+	</select>
+	<select id="SelStrBy" resultType="street">
+		<include refid="sel"></include>
+		`street` WHERE `downtown_id` =#{dowid}
+	</select>
+	<insert id="addMyHouse">
+		INSERT INTO `house` ( `house_title`, `type_id`,
+		`house_area`,
+		`house_price`,`house_date`,`house_phone`,`house_info`,`user_id`,`province_id`,`downtown_id`,`street_id`,`house_pic`
+		)VALUES(#{myhou.house_title},#{myhou.type_id},#{myhou.House_area},#{myhou.House_price},now(),
+		#{myhou.House_phone},#{myhou.House_info},#{myhou.User_id},#{myhou.province_id},#{myhou.downtown_id},#{myhou.street_id},#{myhou.house_pic}
+		)
+	</insert>
+	<delete id="removeMyHouse">
+		delete from house where `house_id` =#{dhid} and
+		`user_id` =#{duid}
+	</delete>
+	<select id="SelMyHouseDetial" resultType="myhousedetial">
+		SELECT
+		h.`house_title`
+		AS htil,
+		h.`house_date` AS hdate,
+		t.`type_name` AS tname,
+		h.`house_area`
+		AS hare,
+		p.`province_name` AS pname,
+		d.`downtown_name` AS dname,
+		h.`house_phone` AS hphone,
+		h.`house_info` AS hinf,
+		s.`street_name` AS
+		sname
+		FROM
+		`house` AS h
+		LEFT JOIN `type` AS t
+		ON h.`type_id` = t.`type_id`
+		LEFT JOIN `province` AS p
+		ON h.`province_id` = p.`province_id`
+		LEFT JOIN
+		`downtown` AS d
+		ON d.`province_id` = h.`downtown_id`
+		LEFT JOIN`street`
+		AS s
+		ON s.`street_id` = h.`street_id`
+		WHERE h.`house_id` = 3
+		GROUP BY
+		h.`house_id` = #{selid}
+	</select>
+
+	<select id="SelSomeHouse" resultType="houseio">
+		SELECT h.`house_id` AS
+		hid,h.house_title AS htit,m.`type_name` AS
+		mname,h.House_price AS
+		hpri,h.House_info AS hinf,h.House_phone AS
+		hpho,h.house_pic AS hpic
+		FROM house AS h
+		LEFT JOIN `type` AS m
+		ON
+		h.type_id =m.`type_id`
+		<where>
+			<if test="con.title!=null and con.title!=''">
+				and h.house_title LIKE CONCAT("%",#{con.title},"%")
+			</if>
+			<if test="con.money!=null and con.money!=''">
+				and h.House_price =#{con.money}
+			</if>
+			<if test="con.province_id!=null and con.province_id!=''">
+				and h.`province_id` =#{con.province_id}
+			</if>
+			<if test="con.downtown_id!=null and con.downtown_id!=''">
+				and h.`downtown_id` =#{con.downtown_id}
+			</if>
+			<if test="con.street_id!=null and con.street_id!=''">
+				and h.`street_id` = #{con.street_id}
+				=#{con.downtown_id}
+			</if>
+			<if test="con.type!=null and con.type!=''">
+				and h.`type_id` = #{con.type}
+			</if>
+		</where>
+	</select>
+	<select id="SelHouOne" resultType="house">
+		<include refid="sel"></include>
+		house where `house_id` = #{ssid}
+	</select>
+	<update id="modifyHou">
+		UPDATE `house` SET`house_title`
+		=#{myhou.house_title},`type_id`=#{myhou.type_id},`house_area`=#{myhou.House_area},`house_price`=#{myhou.House_price},`house_phone`= #{myhou.House_phone},`house_info`=#{myhou.House_info},`province_id`=#{myhou.province_id},`downtown_id`=#{myhou.downtown_id},`street_id`=#{myhou.street_id},`house_pic`=#{myhou.house_pic}
+		WHERE `house_id` =#{myhou.house_id}
+	</update>
+</mapper>                                                                                                                            

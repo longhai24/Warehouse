@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<typeAliases>
+		<package name="com.accp.pojo"/>
+	</typeAliases>
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageHelper">
+			<!-- 设置数据库类型 Oracle,Mysql,MariaDB,SQLite,Hsqldb,PostgreSQL六种数据库 -->
+			<property name="dialect" value="mysql" />
+			<!-- 设置为true时，使用RowBounds分页会进行count查询 -->
+			<property name="rowBoundsWithCount" value="true" />
+		</plugin>
+	</plugins>
+	<!-- 数据库环境 -->
+	<environments default="mysqlEnv">
+		<!-- mysql -->
+		<environment id="mysqlEnv">
+			<!-- 事务管理 -->
+			<transactionManager type="JDBC"></transactionManager>
+			<!-- 连接信息 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver" />
+				<property name="url"
+					value="jdbc:mysql://localhost:3306/mytest?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true" />
+				<property name="username" value="root" />
+				<property name="password" value="123456" />
+				<property name="poolMaximumActiveConnections" value="20" />
+			</dataSource>
+		</environment>
+	</environments>
+<mappers>
+<mapper resource="mapper.xml"/>
+</mappers>
+</configuration>

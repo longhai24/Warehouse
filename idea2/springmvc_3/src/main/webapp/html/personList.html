@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>会员列表</title>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+</head>
+
+<body>
+	<div>
+		<table border="1" width="500">
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>姓名</th>
+					<th>性别</th>
+					<th>生日</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody id="personTbl">
+
+			</tbody>
+			<tfoot>
+				<tr>
+					<th colspan="5">
+						<button id="prev">上一页</button>&nbsp;
+						<button id="next">下一页</button>
+					</th>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</body>
+<script type="text/javascript" src="../js/jquery-1.12.4.js"></script>
+<script>
+	var pageInfo;//全局分页对象
+
+	//通用分页方法加载数据
+	function goToPage(pageNum, pageSize) {
+		$
+				.getJSON(
+						"/springmvc_3/person/list",
+						{
+							num : pageNum,
+							size : pageSize
+						},
+						function(data) {
+							pageInfo = data;//非常重要
+							$("#personTbl").empty();
+							$
+									.each(
+											data.list,
+											function(i, obj) {
+												var $row = "<tr><td>"
+														+ (i + 1)
+														+ "</td><td>"
+														+ obj.pname
+														+ "</td><td>"
+														+ obj.psex
+														+ "</td><td>"
+														+ obj.pdate
+														+ "</td><td><a class='del' data-id='"+obj.pid+"' href='#'>移除</a></td></tr>";
+												$("#personTbl").append($row);
+											});
+						});
+	}
+
+	//初始化
+	$(function() {
+		goToPage(1, 3);
+		//上一页
+		$("#prev").click(function() {
+			if (pageInfo.hasPreviousPage) {
+				goToPage(pageInfo.prePage, pageInfo.pageSize);
+			} else {
+				alert("没有上一页");
+			}
+
+		});
+
+		//下一页
+		$("#next").click(function() {
+			if (pageInfo.hasNextPage) {
+				goToPage(pageInfo.nextPage, pageInfo.pageSize);
+			} else {
+				alert("没有下一页");
+			}
+		});
+
+		//动态绑定事件
+		$(document).on("click", ".del", function() {
+			if (window.confirm("是否移除?")) {
+				var id = $(this).attr("data-id");
+				$.getJSON("/springmvc_3/person/del", {
+					pid : id
+				}, function(data) {
+					if (data.code == 200) {
+						alert("移除成功");
+						goToPage(1, 3);
+					} else {
+						alert("移除失败");
+					}
+				});
+			}
+		});
+
+	});
+</script>
+</html>

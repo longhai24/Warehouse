@@ -1,0 +1,100 @@
+
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="zh-cn">
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+		<title>管理人员-管理</title>
+		<link rel="stylesheet" type="text/css" href="../css/style_admin.css">
+</head>
+<body>
+		<table cellspacing="1" cellpadding="4" width="100%"
+			class="tableborder" id="table3">
+			<form name="form1" action="showUserList.jsp" method="post">
+			<tr>
+				<td colspan="15" class="header">
+					商品管理
+				</td>
+			</tr>
+			<tr>
+				<td align="center" class="altbg1">
+					<b>商品编号</b>
+				</td>
+				<td align="center" class="altbg1">
+					<b>商品名称</b>
+				</td>
+				<td align="center" class="altbg1">
+					<b>商品商标</b>
+				</td>
+				<td align="center" class="altbg1">
+					<b>商品型号</b>
+				</td>
+				<td align="center" class="altbg1">
+					<b>商品价格</b>
+				</td>				
+				<td align="center" class="altbg1">
+					<b>修改</b>
+				</td>
+				<td align="center" class="altbg1">
+					<b>删除</b>
+				</td>
+			</tr>
+			
+			
+			
+
+
+			</table>
+</body>
+<script type="text/javascript" src="../static/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+	$(document).on("click",".ax",function(){
+		var pid = $(this).parents("tr").find("td:eq(0)").html();
+		window.sessionStorage.setItem("pid",pid);
+		location.href="updateProduct.html";
+		return false;
+	})
+	$(document).on("click",".as",function(){
+		var pid = $(this).parents("tr").find("td:eq(0)").html();
+		var thi = $(this);
+		if(confirm("确定要删除商品编号:"+pid+"吗?")){
+			$.ajax({
+				type:"post",
+				url:"/aiccse/c/goods?usr=deleteProduct",
+				dataType:"json",
+				data:{"pid":pid},
+				success:function(data){
+					if(data.code == 200){
+						alert(data.msg)
+						thi.parents("tr").remove();
+					}else{
+						alert(data.msg)
+					}
+				}
+			});
+		}
+		return false;
+	})
+		$(function() {
+			$.ajax({
+				url:"/aiccse/c/goods?usr=manageProduct",
+				data:"",
+				type:"post",
+				dataType:"json",
+				success: function(result) {
+					$.each(result,function(i,j){
+						var tr = $("<tr>");
+						var pid = $('<td class="altbg2"  align="center"></td>').html(j.pid);
+						var pname = $('<td class="altbg2"  align="center"></td>').html(j.pname);
+						var pflag = $('<td class="altbg2"  align="center"></td>').html(j.pflag);
+						var ptype = $('<td class="altbg2"  align="center"></td>').html(j.ptype);
+						var pprice = $('<td class="altbg2"  align="center"></td>').html(j.pprice);
+						var pupdata = $('<td class="altbg2"  align="center"><a href="updateProduct.html?productID=1" class = "ax">修改</a></td>');
+						var pdelete = $('<td class="altbg2"  align="center"><a href="updateProduct.html?productID=1" class = "as">删除</a></td>');
+						tr.append(pid).append(pname).append(pflag).append(ptype).append(pprice).append(pupdata).append(pdelete)
+						$("#table3").append(tr);
+					})
+				}
+			})
+		})
+</script>
+</html>

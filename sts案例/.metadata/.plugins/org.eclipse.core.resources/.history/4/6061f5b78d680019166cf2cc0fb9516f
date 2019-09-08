@@ -1,0 +1,4 @@
+eclipse.preferences.version=1
+encoding//src/com/accp/Test/dao/BaseDao.java=UTF-8
+encoding//src/com/accp/Test/factory/ConnectionFactory.java=UTF-8
+encoding//src/com/accp/Test/factory/UnPoolConnectionFactory.java=UTF-8

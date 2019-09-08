@@ -1,0 +1,126 @@
+
+<html>
+
+	<head>
+		<meta http-equiv="Content-Language" content="zh-cn">
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+		<title>管理员-添加</title>
+		<link rel="stylesheet" type="text/css" href="../css/style_admin.css">
+		
+	</head>
+
+	<body>
+		<form name="form1" action="addManager.jsp" method="post">
+			<table cellspacing="1" cellpadding="4" width="100%"
+				class="tableborder" id="table3">
+
+				<input type="hidden" name="action" value="save" />
+				<tr>
+					<td colspan="12" class="header">
+						管理员-添加
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						管理员名称：
+					</td>
+					<td class="altbg2" colspan="11">
+						<input type="text" name="userName" size="34">
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						密&nbsp; 码：
+					</td>
+					<td class="altbg2" colspan="11">
+						<input type="password" name="password" size="34" onkeypress="return event.keyCode>=48&&event.keyCode<=57" ng-pattern="/[^a-zA-Z]/">
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						确认密码：
+					</td>
+					<td class="altbg2" colspan="11">
+						<input name="confirmpassword" size="34" type="password" onkeypress="return event.keyCode>=48&&event.keyCode<=57" ng-pattern="/[^a-zA-Z]/">
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="altbg1">
+						角色：
+					</td>
+					<td><select name="txtRole">
+					
+						
+					</select></td>
+				</tr>
+
+				<tr>
+					<td class="altbg1">
+					</td>
+					<td class="altbg2" colspan="11">
+						<input type="submit" value="提交" name="B1">
+<!-- 							onClick="return fun_check_form();"> -->
+						&nbsp;
+						<input type="reset" value="重置" name="B2">
+					</td>
+				</tr>
+
+			</table>
+		</form>
+	</body>
+<script type="text/javascript" src="../static/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+	//渲染管理员
+	$.ajax({
+		url:"/aiccse/c/goods?usr=selectRole",
+		data:"",
+		dataType:"json",
+		type:"post",
+		success:function(result){
+			var use = window.sessionStorage.getItem("selfuse");
+			var obj = eval('('+use+')');
+			$.each(result,function(i,j){
+				if(obj.ro.rid < j.rid){
+					var op = $('<option>').html(j.rname);
+					op.val(j.rid);
+					$('[name="txtRole"]').append(op);
+				}
+			});
+		}
+	})
+
+//添加事件
+$('[name="B1"]').click(function(){
+	var pwod = $('[name="confirmpassword"]').val();
+	var name = $('[name="userName"]').val();
+	var pwd = $('[name="password"]').val();
+	var rid = $('[name="txtRole"]').val();
+	var jsor ={"username":name,"userpwd":pwd,"rid":rid}
+	if(pwod == pwd){
+		$.ajax({
+			url:"/aiccse/c/goods?usr=addrole",
+			data:{"uses":JSON.stringify(jsor)},
+			type:"post",
+			dataType:"json",
+			success:function(result){
+				if(result.code == 200){
+					alert(result.msg)
+					window.location.href="showUserList.html";
+				}else{
+					alert(result.msg)
+				}
+			}
+		})
+	}else{
+		alert("密码不一致")
+		$('[name="confirmpassword"]').val("");
+		$('[name="password"]').val("");
+		$('[name="password"]').focus();
+	}
+	return false;
+})
+
+</script>
+
+</html>

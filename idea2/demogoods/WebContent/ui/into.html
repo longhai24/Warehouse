@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<h3>商编辑</h3>
+		<p><input type="hidden" value="" id="id"/></p>
+		<p>商品名称: <input type="text" id="name" value="" /></p>
+		<p>商品型号: <input type="text" id="type" value="" /></p>
+		<p>商品分类: 
+			<select name="fl" id="fl">
+			</select>
+		</p>
+		<p>商品单价: <input type="text" id="dj" value="" /></p>
+		<p><input type="button" name="bn" id="bn" value="修改" /></p>
+	</body>
+	<script type="text/javascript" src="../static/js/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript">
+		$.ajax({
+			url:"/demogoods/goods?usr=selectcl",
+			type:"post",
+			dataType:"json",
+			success:function(result){
+				$.each(result,function(i,j){
+					var op = $("<option>").html(j.goodsClassName).val(j.goodsClassId)
+					$('[name="fl"]').append(op)
+				})
+			}
+		})
+	$("#bn").click(function(){
+		var id = window.sessionStorage.getItem("id");
+		var name = $("#name").val();
+		var type = $("#type").val();
+		var fl = $("#fl").val();
+		var dj = $("#dj").val();
+		var jsor = {"goodsid":id,"goodsName":name,"goodsType":type,"goodsclazzid":fl,"goodsPrice":dj}
+		$.ajax({
+			url:"/demogoods/goods?usr=into",
+			type:"post",
+			data:{name:JSON.stringify(jsor)},
+			dataType:"text",
+			success:function(result){
+				if(result == 1){
+					alert("修改成功")
+					window.location.href="goods.html";
+				}
+			}
+		})
+	})
+	</script>
+	
+</html>

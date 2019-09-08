@@ -1,0 +1,88 @@
+package com.accp.mycommon.factory;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
+
+public class UnPoolConnectionFactory implements ConnectionFactory {
+
+	private final static UnPoolConnectionFactory cf = new UnPoolConnectionFactory();
+
+	private static Logger logger = Logger.getRootLogger();
+
+	// 闈欐�佸緢閲嶈
+	private static ThreadLocal<Connection> tl = new ThreadLocal<Connection>();// 瀛樻斁鍗曚釜杩炴帴锛� 澶氱嚎绋嬫儏鍐典笅锛屼繚瀛樼嚎绋嬪畨鍏紝涓�涓嚎绋嬩竴涓猅hreadLocal
+
+	public static String CLASS_NAME;
+	public static String URL;
+	public static String USER_NAME;
+	public static String USER_PWD;
+
+	/**
+	 * 
+	 * 鍔犺浇java灞炴�ч厤缃枃浠�
+	 */
+	private UnPoolConnectionFactory() {
+		Properties param = new Properties();
+		try {
+			param.load(UnPoolConnectionFactory.class.getResourceAsStream("db.properties"));
+			URL = param.getProperty("db.url");
+			CLASS_NAME = param.getProperty("db.classname");
+			USER_NAME = param.getProperty("db.username");
+			USER_PWD = param.getProperty("db.pwd");
+		} catch (Exception ex) {
+			logger.error("閰嶇疆鏂囦欢璇诲彇澶辫触", ex);
+		}
+
+		try {
+			Class.forName(CLASS_NAME);
+		} catch (ClassNotFoundException e) {
+			logger.error("椹卞姩鍔犺浇澶辫触", e);
+		}
+
+	}
+
+	/**
+	 * 
+	 * @title: getInstance
+	 * @description: 鍗曚緥鑾峰緱瀹炰緥
+	 * @return
+	 */
+	public static UnPoolConnectionFactory getInstance() {
+		return cf;
+	}
+
+	@Override
+	public Connection getConnection() {
+		try {
+			Connection conn = tl.get();// key:绾跨▼id
+			if (conn == null) {
+				conn = DriverManager.getConnection(URL, USER_NAME, USER_PWD);
+				conn.setAutoCommit(false);// 鍏抽棴jdbc鑷姩鎻愪氦浜嬪姟銆愰潪甯搁噸瑕併��
+				tl.set(conn);// 闈炲父閲嶈
+			}
+			return conn;
+		} catch (SQLException e) {
+			logger.error("鏁版嵁搴撹繛鎺ヨ幏寰楀け璐�", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void releaseConnection() {
+		try {
+			Connection conn = tl.get();
+			if (conn != null && !conn.isClosed()) {
+				conn.close();
+				tl.set(null);// 闈炲父閲嶈
+			}
+		} catch (SQLException e) {
+			logger.error("鏁版嵁搴撹繛鎺ュ叧闂け璐�", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+}

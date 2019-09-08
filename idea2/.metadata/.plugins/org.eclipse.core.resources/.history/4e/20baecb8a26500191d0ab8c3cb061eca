@@ -1,0 +1,63 @@
+package com.accp.test;
+
+import java.lang.reflect.Field;
+import java.sql.ResultSet;
+import java.util.List;
+
+import com.accp.dao.BaseDao;
+
+public class CommonDao extends BaseDao{
+	/**
+	 * 查询所有
+	 * @param cls
+	 * @return
+	 */
+	public <T> List<T> select(Class<T> cls){
+		String sql = "select * from "+cls.getSimpleName();
+		ResultSet re = null;
+		List<T> list = null;
+		try {
+			re = super.query(sql);
+			while(re.next()) {
+				Object obj = cls.newInstance();
+				for (Field f : cls.getDeclaredFields()) {
+					f.setAccessible(true);
+					f.set(obj, re.getObject(f.getName()));
+				}
+				list.add((T) obj);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			super.closeAll(re);
+		}
+		return list;
+	}
+	/**
+	 * 根据主键id删除表实体
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 */
+	public <T> int delete(Object obj) throws Exception, IllegalArgumentException, IllegalAccessException {
+		Class cls = obj.getClass();
+		String sql ="delete from "+cls.getSimpleName()+" where " + cls.getDeclaredFields()[0].getName() +"="+ cls.getDeclaredFields()[0].get(obj);
+		int i = super.exceuteUpdate(sql);
+		super.closeAll(null);
+		return i;
+	}
+	/**
+	 * 根据传入对象新增(主键自增)
+	 * @param obj
+	 * @return
+	 */
+	public int into(Object obj) {
+		String fields = "";
+		for (Field f : obj.getClass().getDeclaredFields()) {
+				fields = fields + "";
+		} 
+		String sql = "insert into "+obj.getClass().getSimpleName()+" ( )";
+	}
+}

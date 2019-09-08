@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.t6.dao.IPersonDao">
+
+	<select id="queryAllPersons" resultType="com.accp.t6.pojo.Person">
+		select * from tbl_person
+	</select>
+
+	<insert id="savePerson">
+		insert into tbl_person(pname,psex,pdate,pimg)
+		values(#{person.pname},#{person.psex},#{person.pdate,jdbcType=DATE},#{person.pimg});
+	</insert>
+
+</mapper>    

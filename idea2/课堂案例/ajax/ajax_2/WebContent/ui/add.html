@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<title>会员注册</title>
+
+
+<style>
+a:hover {
+	color: red;
+}
+</style>
+
+</head>
+
+<body>
+	<h1>会员注册</h1>
+
+	用户名:
+	<input type="text" name="txtName" id="txtName" />
+	<br /> 密&nbsp;&nbsp;码:
+	<input type="password" name="txtPwd" id="txtPwd" />
+	<br /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<a id="saveMember" href="javascript:void(0)"
+		style="text-decoration: none; font-size: 20px;">注册</a>
+
+</body>
+
+
+<script src="../js/jquery-1.12.4.js"></script>
+<script>
+	//ajax全局设置
+	$.ajaxSetup({
+		timeout:5000
+	});
+	
+	$(document).ajaxError(function(){
+		alert("服务器正忙....");
+	});
+
+
+	$("#saveMember").click(function(){
+		//组装json格式
+		var member={};
+		//必须与实体类中的属性名一致
+		member["userName"]=$.trim($("#txtName").val());
+		member["userPwd"]=$.trim($("#txtPwd").val());
+		//发送ajax请求   JSON.stringify(member) 非常重要 序列化
+		$.post("/ajax_2/member",{m:"add",jsonStr:JSON.stringify(member)},function(data){
+			if(data.code=="200"){
+				alert("新增成功");
+				
+			}else if(data.code=="500"){
+				alert(data.msg);
+			}
+		},"json");
+	});
+</script>
+</html>

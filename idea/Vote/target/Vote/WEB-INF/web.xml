@@ -1,0 +1,15 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+
+    <servlet>
+        <servlet-name>VoteSubAction</servlet-name>
+        <servlet-class>com.tx.action.VoteSubAction</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>VoteSubAction</servlet-name>
+        <url-pattern>/VoteSubAction</url-pattern>
+    </servlet-mapping>
+</web-app>

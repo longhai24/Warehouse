@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+	<!-- 组件实例化 -->
+	<bean scope="prototype" id="feng" class="com.accp.t1.pojo.Person" init-method="init">
+		<!-- 构建器 -->
+		<constructor-arg index="0" value="1"></constructor-arg>
+		<constructor-arg index="1" value="阿亮"></constructor-arg>
+		<constructor-arg index="2" value="0"></constructor-arg>
+		<constructor-arg index="3">
+			<bean class="java.util.Date"></bean>
+		</constructor-arg>
+		<constructor-arg index="4" value="meng.jpg"></constructor-arg>
+		<!-- 属性注入方式 -->
+		<!-- 值类型 -->
+		<!-- <property name="pname" value="罗玉凤"></property>
+		<property name="psex" value="1"></property> -->
+		<!-- 日期类型 -->
+		<!-- <property name="pdate">
+			<bean class="java.util.Date">
+				1900+?
+				<property name="year" value="119"></property>
+				<property name="month" value="4"></property>
+				<property name="date" value="21"></property>
+			</bean>
+		</property> -->
+		<!-- 集合类型 -->
+		<!-- <property name="loves">
+			<list>
+				<value>卖萌</value>
+				<value>逛街</value>
+			</list>
+		</property>
+		<property name="addresses">
+			<list>
+				<bean class="com.accp.t1.pojo.Address">
+					<property name="aname" value="湖南株洲"></property>
+					<property name="atel" value="138383854438"></property>
+				</bean>
+				<bean p:aname="湖北武汉" p:atel="138383854438" class="com.accp.t1.pojo.Address">
+				</bean>
+			</list>
+		</property> -->
+	</bean>
+	
+	<bean scope="prototype" id="printer" class="com.accp.t1.whyioc.Printer">
+		<!-- 依赖 -->
+		<property name="person" ref="feng"></property>
+	</bean>
+
+</beans>

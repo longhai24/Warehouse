@@ -1,0 +1,168 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Language" content="zh-cn">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>管理人员-管理</title>
+<link rel="stylesheet" type="text/css" href="../css/style_admin.css">
+</head>
+<body>
+	<table cellspacing="1" cellpadding="4" width="100%" class="tableborder"
+		id="table3">
+		<thead>
+			<form name="form1" action="showUserList.jsp" method="post">
+			<tr>
+				<td colspan="15" class="header">用户管理</td>
+			</tr>
+			<tr>
+				<td align="center" class="altbg1"><b>用户名</b></td>
+				<td align="center" class="altbg1"><b>角色</b></td>
+				<td align="center" class="altbg1"><b>操作</b></td>
+			</tr>
+		</thead>
+		<tbody>
+			</form>
+
+		</tbody>
+	</table>
+</body>
+<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+	var rid1 = window.sessionStorage.getItem("rid");
+	var uid = window.sessionStorage.getItem("uid");
+	$.ajax({
+				url : "http://localhost:8080/Goods/c/GoodsAction?method=selMo",
+				data : {},
+				dataType : "json",
+				type : "post",
+				success : function(data) {
+					for ( var i in data) {
+						
+						var tr = $("<tr id='"+data[i].urid+"'></tr>");
+						var td1 = $("<td id="+data[i].uid+" align='center' class='altbg2'>"
+								+ data[i].uname + "</td>");
+						var td2 = $("<td align='center' class='altbg2'>"
+								+ data[i].sname + "</td>");
+						if (data[i].dtype ==0) {
+						var td7 = $("<td class='altbg2' align='center'><a href='' class='recover' >[恢复账号]&nbsp;</a><a	href='' class='update'>[修改]</a></td>");
+							
+						}else{
+							var td7 = $("<td class='altbg2' align='center'><a href='' class='del' >[注销]&nbsp;</a><a	href='' class='update'>[修改]</a></td>");
+						}
+						tr.append(td1).append(td2).append(td7);
+						$("tbody").append(tr);
+					}
+				}
+			})
+
+	$(document).on("click", ".update", function(e) {
+		var rid2 = $(this).parent().parent().attr("id");
+		if (rid1 <= rid2) {
+		 	var nuid = $(this).parent().parent().children().eq(0).attr("id");
+			if (nuid ==uid) {
+				//salert("我在操作自己")
+				$.ajax({
+					url:"http://localhost:8080/Goods/c/GoodsAction?method=toUpdate",
+					data:{uid1:nuid},
+					type:"post",
+					dataType:"json",
+					success: function(data) {
+						window.sessionStorage.setItem("username", data.username);
+						window.sessionStorage.setItem("userrid", data.rid);
+						window.sessionStorage.setItem("userpwd", data.userpwd);
+						window.sessionStorage.setItem("userid", data.userid);
+						window.sessionStorage.setItem("nrid", rid2);
+						window.sessionStorage.setItem("nuid",nuid );
+						location.href="updateManager.html";
+					}
+				})
+			}
+			else if(nuid!=uid &&rid1==rid2){
+				alert("平起平坐你竟然想操作我？")
+			}
+			else{
+				//alert("我在操作下级")
+				$.ajax({
+					url:"http://localhost:8080/Goods/c/GoodsAction?method=toUpdate",
+					data:{uid1:nuid},
+					type:"post",
+					dataType:"json",
+					success: function(data) {
+						window.sessionStorage.setItem("username", data.username);
+						window.sessionStorage.setItem("userrid", data.rid);
+						window.sessionStorage.setItem("userpwd", data.userpwd);
+						window.sessionStorage.setItem("userid", data.userid);
+						window.sessionStorage.setItem("nuid", nuid);
+						location.href="updateManager.html";
+					}
+				})
+			}
+		}else{
+			alert("老子是你上级")
+		}
+		return false;
+	})
+	$(document).on("click", ".del", function(e) {
+		var rid2 = $(this).parent().parent().attr("id");
+		if (rid1 <= rid2) {
+		 	var nuid = $(this).parent().parent().children().eq(0).attr("id");
+			if (nuid ==uid) {
+				alert("无法注销自己")
+			}
+			else if(nuid!=uid &&rid1==rid2){
+				alert("平起平坐你竟然想删了我？")
+			}
+			else{
+				if (confirm("你确定要注销吗")) {
+					$.ajax({
+						url:"http://localhost:8080/Goods/c/GoodsAction?method=delUser",
+						data:{did:nuid},
+						type:"post",
+						dataType:"json",
+						success: function(data1) {
+							if (data1.fir=="200") {
+								alert("注销成功");
+								window.location.href="showUserList.html"
+							}
+							else{
+								alert("注销失败")
+							}
+						}
+					})
+					return false;
+				}
+			}
+		}else{
+			alert("老子是你上级")
+		}
+	})
+	
+	$(document).on("click", ".recover", function(e) {
+		var rid2 = $(this).parent().parent().attr("id");
+		var nuid = $(this).parent().parent().children().eq(0).attr("id");
+		if (rid1 != 1) {
+			alert("只有超级管理员能恢复账号")
+		}
+		else {
+			$.ajax({
+				url:"http://localhost:8080/Goods/c/GoodsAction",
+				data:{method:"recover",nuid:nuid},
+				type:"post",
+				dataType:"json",
+				success: function(data) {
+					if (data.fir =="200") {
+						alert(data.sec);
+						window.location.href="showUserList.html"
+					}else{
+						alert(data.sec)
+					}
+				}
+			})	
+			
+		}
+		return false;
+		
+	})
+	
+</script>
+</html>

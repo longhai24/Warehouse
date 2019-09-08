@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <!-- namespace必填，类的完整限定名，保证唯一就行  --> 
+	<mapper namespace="com.accp.sum">
+	<!-- resulttype 是结果集类型，主要是指一行的类型 -->
+	<select id="queryAll" resultType="map">select * from department</select>
+	<insert id="add"></insert>
+	</mapper>

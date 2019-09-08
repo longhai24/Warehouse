@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body id="lk">
+		<table border="1" cellspacing="1" cellpadding="0" width="100%" style="border: red;">
+			<thead style="background-color: #0E90D2;">
+				<tr>
+					<th>
+						姓名
+					</th>
+					<th>
+						工作
+					</th>
+					<th>
+						工资
+					</th>
+					<th>
+						入职日期
+					</th>
+					<th>
+						奖金
+					</th>
+					<th>
+						操作
+					</th>
+				</tr>
+			</thead>
+			<tbody id="tb">
+				
+			</tbody>
+		</table>
+	</body>
+<script type="text/javascript" src="../static/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+	
+	
+	
+	
+	$(document).on("click",".ac",function(){ 
+		if(confirm("您确定要删除么?")){
+			var thi = $(this);
+			var id = $(this).parents("tr").attr("liqi");
+			var z = $(this).parents("tr").find("td:eq(1)").attr("z");
+				$.ajax({
+				type:"post",
+				url:"/demo/c/dep?usr=delete",
+				dataType:"text",
+				data:{did:id,z:z},
+				success:function(result){
+					
+					var cunt = $("#tb").find("tr").length
+					var inl = parseInt(cunt)
+					thi.parents("tr").remove();
+					alert(inl-1+"歌")
+					if(inl-1 == 0){
+						$("#lk").remove()
+					}
+					alert("此部门还有"+result+"位员工")
+				}
+			})
+		}
+	})
+	
+	
+	
+	
+	
+		$(function(){
+			$.ajax({
+				type:"post",
+				url:"/demo/c/dep?usr=selectsta",
+				dataType:"json",
+				data:"",
+				success:function(result){
+					$.each(result,function(i,j) {
+						var tr = $("<tr>").attr("liqi",j.sid);
+						var td0 = $("<td>").html(j.sname);
+						var td1 = $("<td>").attr("z",j.dep.id).html(j.sgz);
+						var td2 = $("<td>").html(j.smoney);
+						var td3 = $("<td>").html(j.stime);
+						var td4 = $("<td>").html(j.sjang);
+						var td5 = $("<td>").append($("<a class ='ac'>").html("删除"))
+						tr.append(td0).append(td1).append(td2).append(td3).append(td4).append(td5)
+						$("#tb").append(tr)
+					})
+				}
+			})
+		})
+</script>
+</html>

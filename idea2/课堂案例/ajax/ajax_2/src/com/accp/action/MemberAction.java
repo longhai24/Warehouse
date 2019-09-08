@@ -1,0 +1,179 @@
+package com.accp.action;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.accp.biz.MemberBiz;
+import com.accp.entity.Member;
+import com.alibaba.fastjson.JSON;
+
+public class MemberAction extends HttpServlet {
+
+	private MemberBiz memberBiz = new MemberBiz();
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		this.doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=utf-8");
+		response.setCharacterEncoding("utf-8");
+		response.setHeader("expires", "0");// 设置ie缓存过期
+		request.setCharacterEncoding("utf-8");
+		String method = request.getParameter("m");
+		if ("add".equals(method)) {
+			this.add(request, response);
+		} else if ("loginin".equals(method)) {
+			this.loginin(request, response);
+		} else if ("getMember".equals(method)) {
+			this.getMember(request, response);
+		} else if ("query".equals(method)) {
+			this.query(request, response);
+		} else if ("find".equals(method)) {
+			this.find(request, response);
+		} else if ("load".equals(method)) {
+			this.load(request, response);
+		} else if ("update".equals(method)) {
+			this.update(request, response);
+		} else if ("delete".equals(method)) {
+			this.delete(request, response);
+		}
+	}
+
+	private void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out = response.getWriter();
+		String jsonStr = request.getParameter("jsonStr");
+		Map<String, String> message = new HashMap<String, String>();
+		// 反序列化
+		try {
+			memberBiz.addMemberInfo(JSON.parseObject(jsonStr, Member.class));
+			message.put("code", "200");
+			message.put("msg", "ok");
+		} catch (Exception ex) {
+			message.put("code", "500");
+			message.put("msg", ex.getMessage());
+		}
+		out.write(JSON.toJSONString(message));// 序列化
+		out.flush();
+		out.close();
+	}
+
+	private void loginin(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String name = request.getParameter("name");
+		String pwd = request.getParameter("pwd");
+		// 消息集合
+		Map<String, String> message = new HashMap<String, String>();
+		Member member = memberBiz.getMemberByNameAndPwd(name, pwd);
+		PrintWriter out = response.getWriter();
+		if (member != null) {
+			request.getSession().setAttribute("MEMBER", member);
+			message.put("code", "200");
+			message.put("msg", "ok");
+		} else {
+			message.put("code", "300");
+			message.put("msg", "user_error");
+		}
+		out.write(JSON.toJSONString(message));
+		out.flush();
+		out.close();
+	}
+
+	/**
+	 * 
+	 * @title: getMember
+	 * @description: 获得session用户
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void getMember(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		Member member = (Member) request.getSession().getAttribute("MEMBER");
+		PrintWriter out = response.getWriter();
+		out.write(JSON.toJSONString(member));// 序列化成json字符串
+		out.flush();
+		out.close();
+	}
+
+	private void query(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		PrintWriter out = response.getWriter();
+		// 序列化
+		out.write(JSON.toJSONString(memberBiz.findMemberList()));
+		out.flush();
+		out.close();
+	}
+
+	private void find(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		PrintWriter out = response.getWriter();
+		String name = request.getParameter("name");
+		out.write(JSON.toJSONString(memberBiz.findMemberByName(name)));
+		out.flush();
+		out.close();
+	}
+
+	private void load(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out = response.getWriter();
+		out.write(JSON.toJSONString(memberBiz.getMemberByName(request.getParameter("name"))));
+		out.flush();
+		out.close();
+	}
+
+	public void delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out = response.getWriter();
+		String name = request.getParameter("name");
+		// 消息集合
+		Map<String, String> message = new HashMap<String, String>();
+		try {
+			memberBiz.removeMember(name);
+			message.put("code", "200");
+			message.put("msg", "ok");
+		} catch (Exception ex) {
+			message.put("code", "500");
+			message.put("msg", ex.getMessage());
+		}
+		out.write(JSON.toJSONString(message));
+		out.flush();
+		out.close();
+	}
+
+	private void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out = response.getWriter();
+
+		String jsonStr = request.getParameter("jsonStr");
+		Map<String, String> message = new HashMap<String, String>();
+		// 反序列化
+		try {
+			memberBiz.modifyMember(JSON.parseObject(jsonStr, Member.class));
+			message.put("code", "200");
+			message.put("msg", "ok");
+		} catch (Exception ex) {
+			message.put("code", "500");
+			message.put("msg", ex.getMessage());
+		}
+		out.write(JSON.toJSONString(message));// 序列化
+		out.flush();
+		out.close();
+	}
+}

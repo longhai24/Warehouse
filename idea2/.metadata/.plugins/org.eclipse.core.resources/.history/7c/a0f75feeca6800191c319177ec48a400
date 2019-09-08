@@ -1,0 +1,337 @@
+package com.accp.dao;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.accp.annotation.Column;
+import com.accp.annotation.Table;
+
+public class CommonDao extends BaseDao {
+	/**
+	 * 查询所有
+	 * 
+	 * @param cls
+	 * @return
+	 */
+	public <T> List<T> select(Class<T> cls) {
+		String tableName = null;
+		if (cls.isAnnotationPresent(Table.class)) {
+			tableName = cls.getDeclaredAnnotation(Table.class).value();
+		}
+		String sql = "select * from " + tableName;
+		ResultSet re = super.executeQuery(sql);
+		List<T> list = new ArrayList<>();
+		try {
+			while (re.next()) {
+				Object obj = cls.newInstance();
+				for (Field f : cls.getDeclaredFields()) { // 获取所有属性
+					f.setAccessible(true);
+					if (f.isAnnotationPresent(Column.class)) { // 判断属性是否有元注解
+						Column c = (Column) f.getDeclaredAnnotation(Column.class);
+						System.out.println(c.name());
+						if (c.isObject()) { // 判断是否为对象
+							continue;
+						} else {
+							f.set(obj, re.getObject(c.name()));
+						}
+					}
+				}
+				list.add((T) obj);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			// super.close();
+		}
+		return list;
+	}
+
+	/**
+	 * 根据主键id删除表实体
+	 * 
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 */
+	public <T> int delete(Object obj) throws Exception, IllegalArgumentException, IllegalAccessException {
+		String tableName = null;
+		int i = 0;
+		Class cls = obj.getClass();
+		if (cls.isAnnotationPresent(Table.class)) {
+			tableName = ((Table) cls.getDeclaredAnnotation(Table.class)).value();
+		}
+		for (Field f : cls.getDeclaredFields()) { // 获取所有字段
+			for (Annotation a : f.getDeclaredAnnotations()) { // 获取该字段所有元注解
+				f.setAccessible(true); // 打开属性开关
+				Column c = (Column) a; // 创建一个元注解对象
+				if (c.isPrimaryKey()) { // 判断该f(字段)元注解是否为主键
+					System.out.println(a + f.getName() + f.get(obj));
+					String sql = "delete from " + tableName + " where " + f.getName() + "=" + f.get(obj);
+					i = super.executeUpdate(sql);
+					// super.close();
+				}
+			}
+		}
+		return i;
+	}
+
+	/**
+	 * 根据传入对象新增(主键自增)
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public int into(Object obj) {
+		ResultSet rs = null;
+		String tblName = null; // 表名
+		String sql = null; // sql语句
+		StringBuffer colNames = new StringBuffer(); // 列名
+		StringBuffer colVals = new StringBuffer(); // 列名值
+		try {
+			Class cls = obj.getClass();
+			// 获得表名
+			if (cls.isAnnotationPresent(Table.class)) {
+				Table tbl = (Table) cls.getDeclaredAnnotation(Table.class);
+				tblName = tbl.value();
+			}
+			// 动态拼接
+			for (Field f : cls.getDeclaredFields()) { // 获取所有字段
+				if (f.isAnnotationPresent(Column.class)) { // 判断该字段是否有Column元注解
+					Column c = (Column) f.getDeclaredAnnotation(Column.class); // 获取该字段元注解
+					if (c.isPrimaryKey()) { // 判断该字段是否为主键,主键则跳过
+						continue;
+					} else {
+						f.setAccessible(true);
+						colNames = colNames.append("`" + c.name() + "`,");
+						if (f.get(obj) == null || f.get(obj) == "" || "".equals(f.get(obj))) {
+							colVals = colVals.append("'" + "',");
+						} else {
+							colVals = colVals.append("" + "'" + f.get(obj) + "',");
+						}
+					}
+				}
+			}
+			colVals = new StringBuffer(colVals.substring(0, colVals.length() - 1));
+			colNames = new StringBuffer(colNames.substring(0, colNames.length() - 1));
+			sql = "insert into %s(%s) values(%s)";
+			sql = String.format(sql, "`" + tblName + "`", colNames.toString(), colVals.toString());
+			System.out.println(sql);
+			int count = super.executeUpdate(sql);
+			return count;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		} finally {
+			// super.close();
+		}
+	}
+
+	/**
+	 * 根据主键修改
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public int update(Object obj) {
+		ResultSet rs = null;
+		String tblName = null; // 表名
+		String sql = null; // sql语句
+		StringBuffer colNames = new StringBuffer(); // 列名
+		StringBuffer whereval = new StringBuffer(); // 条件
+		try {
+			Class cls = obj.getClass();
+			// 获得表名
+			if (cls.isAnnotationPresent(Table.class)) {
+				Table tbl = (Table) cls.getDeclaredAnnotation(Table.class);
+				tblName = tbl.value();
+			}
+			// 动态拼接
+			for (Field f : cls.getDeclaredFields()) {
+				f.setAccessible(true);
+				if (f.isAnnotationPresent(Column.class)) {
+					Column c = (Column) f.getDeclaredAnnotation(Column.class);
+					if (c.isPrimaryKey()) {
+						whereval = whereval.append("`" + c.name() + "`='" + f.get(obj) + "'");
+					} else {
+						colNames = colNames.append("`" + c.name() + "`='" + f.get(obj) + "',");
+					}
+				}
+			}
+			colNames = new StringBuffer(colNames.substring(0, colNames.length() - 1));
+			sql = "update `%s` set %s where %s";
+			sql = String.format(sql, tblName, colNames.toString(), whereval.toString());
+			System.out.println(sql);
+			int count = super.executeUpdate(sql);
+			return count;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		} finally {
+			// super.close();
+		}
+	}
+
+	/**
+	 * 精确查询
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public <T> Object AccurateQuery(Object obj) {
+		ResultSet rs = null;
+		String tblName = null; // 表名
+		String sql = null; // sql语句
+		StringBuffer whereval = new StringBuffer(); // 条件
+		try {
+			Class cls = obj.getClass();
+			if (cls.isAnnotationPresent(Table.class)) { // 获取表名
+				Table tbl = (Table) cls.getDeclaredAnnotation(Table.class);
+				tblName = tbl.value();
+			}
+			for (Field f : cls.getDeclaredFields()) { // 获取所有属性
+				f.setAccessible(true); // 开启属性开关
+				if (f.get(obj) != null && !"".equals(f.get(obj))) { // 判断该属性是否有值
+					if (f.isAnnotationPresent(Column.class)) { // 判断该属性是否有元注解Column
+						Column c = (Column) f.getDeclaredAnnotation(Column.class);
+						if (!c.isObject()) {
+							whereval = whereval.append(" and `" + c.name() + "`='" + f.get(obj) + "'"); // 根据元注解 和 值 拼接
+						}
+					}
+				}
+			}
+			sql = "select * from `%s` where 1=1 %s";
+			sql = String.format(sql, tblName, whereval.toString());
+			System.out.println(sql);
+			rs = super.executeQuery(sql);
+			rs.next();
+			Object newobj = cls.newInstance();
+			for (Field f1 : cls.getDeclaredFields()) {
+				f1.setAccessible(true);
+				if (f1.isAnnotationPresent(Column.class)) {
+					Column c = (Column) f1.getDeclaredAnnotation(Column.class);
+					if (!c.isObject()) { // 判断是否为对象
+						whereval = whereval.append(" and `" + c.name() + "`='" + f1.get(obj) + "'"); // 根据元注解 和 值 拼接
+						f1.set(newobj, rs.getObject(c.name()));
+					}
+				}
+			}
+			return newobj;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
+	}
+
+	/**
+	 * 根据id精确查询
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	private Object selectId(Object obj) {
+		Class cls = obj.getClass();
+		System.out.println(cls.getSimpleName());
+		String sql = null;
+		String tableName = null;
+		if (cls.isAnnotationPresent(Table.class)) {
+			tableName = ((Table) cls.getDeclaredAnnotation(Table.class)).value();
+			sql = "select * from " + tableName;
+		}
+		for (Field f : cls.getDeclaredFields()) {
+			f.setAccessible(true);
+			if (f.isAnnotationPresent(Column.class)) {
+				Column c = (Column) f.getDeclaredAnnotation(Column.class);
+				if (c.isPrimaryKey()) { // 判断是否为主键
+					try {
+						sql = sql + " where `" + c.name() + "` = '" + f.get(obj) + "'";
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						throw new RuntimeException(e);
+					}
+				}
+			}
+		}
+		ResultSet re = super.executeQuery(sql);
+		try {
+			re.next();
+			Object newbj = cls.newInstance();
+			for (Field f : cls.getDeclaredFields()) {
+				f.setAccessible(true);
+				if (f.isAnnotationPresent(Column.class)) {
+					Column c = (Column) f.getDeclaredAnnotation(Column.class);
+					if (c.isObject()) { // 判断是否为对象
+						Object newObj = f;
+						Object liqi = selectId(newObj);
+						f.set(newbj, liqi);
+					} else {
+						f.set(newbj, re.getObject(c.name()));
+					}
+				}
+			}
+			return newbj;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			// super.close();
+		}
+	}
+
+	/**
+	 * 带条件查询
+	 * 
+	 * @param <T>
+	 * @param obj
+	 * @return
+	 */
+	public <T> List<T> liqi(Object obj) {
+		ResultSet rs = null;
+		List<T> list = null;
+		String tblName = null; // 表名
+		String sql = null; // sql语句
+		StringBuffer whereval = new StringBuffer(); // 条件
+		try {
+			Class cls = obj.getClass();
+			if (cls.isAnnotationPresent(Table.class)) { // 获取表名
+				Table tbl = (Table) cls.getDeclaredAnnotation(Table.class);
+				tblName = tbl.value();
+			}
+			for (Field f : cls.getDeclaredFields()) { // 获取所有属性
+				f.setAccessible(true); // 开启属性开关
+				if (f.get(obj) != null && !"".equals(f.get(obj))) { // 判断该属性是否有值
+					if (f.isAnnotationPresent(Column.class)) { // 判断该属性是否有元注解Column
+						Column c = (Column) f.getDeclaredAnnotation(Column.class);
+						if (!c.isObject()) {
+							whereval = whereval.append(" and `" + c.name() + "`='" + f.get(obj) + "'"); // 根据元注解 和 值 拼接
+						}
+					}
+				}
+			}
+			sql = "select * from `%s` where 1=1 %s";
+			sql = String.format(sql, tblName, whereval.toString());
+			System.out.println(sql);
+			rs = super.executeQuery(sql);
+			while (rs.next()) {
+				System.out.println("jin");
+				Object newobj = cls.newInstance();
+				for (Field f : cls.getDeclaredFields()) { // 获取所有属性
+					f.setAccessible(true);
+					if (f.isAnnotationPresent(Column.class)) { // 判断属性是否有元注解
+						Column c = (Column) f.getDeclaredAnnotation(Column.class);
+						if (c.isObject()) { // 判断是否为对象
+
+						} else {
+							f.set(newobj, rs.getObject(c.name()));
+						}
+					}
+				}
+				list.add((T) newobj);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return list;
+	}
+}

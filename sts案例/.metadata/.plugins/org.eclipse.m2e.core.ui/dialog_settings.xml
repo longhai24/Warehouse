@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="MavenProjectWizardArtifactPage">
+		<list key="groupId">
+		</list>
+		<list key="name">
+		</list>
+		<list key="artifactId">
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+		<list key="version">
+			<item value="0.0.1-SNAPSHOT"/>
+		</list>
+	</section>
+	<section name="org.eclipse.m2e.core.pom.dependencies">
+	</section>
+	<section name="org.eclipse.m2e.core.pom.overview">
+		<list key="ciManagementUrl">
+		</list>
+		<list key="ciManagementSystem">
+		</list>
+		<list key="issueManagementSystem">
+		</list>
+		<list key="issueManagementUrl">
+		</list>
+	</section>
+	<section name="org.eclipse.m2e.core.ui.internal.preferences.LocalArchetypeCatalogDialog">
+		<list key="catalogLocation">
+			<item value="C:\mvn_repository\archetype-catalog.xml"/>
+		</list>
+	</section>
+	<section name="MavenProjectWizardArchetypePage">
+		<item value="All Catalogs" key="catalog"/>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+	<section name="MavenProjectWizardLocationPage">
+		<list key="location">
+			<item value="C:\孙略茗\Y2\MTest\Bank\src\main\java\com\tx\Bank\dao\IBank.java"/>
+			<item value="C:\孙略茗\Y2\MTest\Vote\src\main\webapp\javascript\index.js"/>
+			<item value="C:\孙略茗\Y2\MTest\Vote"/>
+			<item value="C:\孙略茗\Y2\MTest\spring\src\main\resources\test.xml"/>
+			<item value="C:\孙略茗\Y2\MTest\mvn5.9\src\main\resources\config.xml"/>
+			<item value="C:\孙略茗\Y2\MTest\mvn2_5.6\src\main\resources\mapper.xml"/>
+			<item value="C:\孙略茗\Y2\MTest\asdfas"/>
+			<item value="C:\孙略茗\Y2\MTest\mvn_1\pom.xml"/>
+			<item value="C:\孙略茗\Y2\MTest"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+	<section name="Maven2ProjectWizardArchifactPage">
+		<list key="package">
+			<item value="com.tx.temp3"/>
+			<item value="com.tx.temp"/>
+			<item value="com.tx.no1"/>
+			<item value="com.tx.UnknownTest"/>
+		</list>
+		<list key="groupId">
+			<item value="com.tx"/>
+		</list>
+		<list key="artifactId">
+			<item value="temp3"/>
+			<item value="temp"/>
+			<item value="no1"/>
+			<item value="UnknownTest"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+		<list key="version">
+			<item value="0.0.1-SNAPSHOT"/>
+		</list>
+	</section>
+</section>

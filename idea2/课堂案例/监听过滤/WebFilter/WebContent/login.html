@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>登录</title>
+</head>
+
+<body>
+	<div>
+		<table>
+			<tr>
+				<td>用户名:</td>
+				<td><input type="text" id="userName" /></td>
+			</tr>
+			<tr>
+				<td>密&nbsp;码:</td>
+				<td><input type="password" id="userPwd" /></td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center"><input id="loginin"
+					type="button" value="登录" /></td>
+			</tr>
+		</table>
+	</div>
+</body>
+<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+<script type="text/javascript">
+	//全局设置
+	$.ajaxSetup({
+		timeout : 6000
+	});
+
+	$(document).ajaxError(function() {
+		alert("服务器正忙.....");
+	});
+
+	$("#loginin").click(function() {
+		$.post("/WebFilter/c/user", {
+			"m" : "loginin",
+			"userName" : $.trim($("#userName").val()),
+			"userPwd" : $.trim($("#userPwd").val())
+		}, function(txt) {
+			if (txt == "yes") {
+				location.href = "index.html";
+			} else if (txt == "no") {
+				alert("用户名或密码错误");
+			}
+		}, "text");
+	});
+</script>
+</html>

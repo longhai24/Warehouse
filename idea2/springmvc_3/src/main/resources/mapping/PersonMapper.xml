@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.t3.dao.IPersonDao">
+
+	<select id="queryPerson" resultType="person">
+		SELECT * FROM
+		tbl_person
+	</select>
+
+	<!-- 主详删除-->
+	<delete id="deletePerson">
+		delete from tbl_address where apid=#{pid};
+		delete from tbl_person where pid=#{pid};
+	</delete>
+
+	<!-- 主详新增 -->
+	<insert id="savePerson">
+		INSERT INTO tbl_person(pid,pname,psex,pdate,pimg)
+		VALUES(#{person.pid},#{person.pname},#{person.psex},#{person.pdate,jdbcType=DATE},#{person.pimg});
+		<if test="person.addresses.size()!=0">
+			INSERT INTO tbl_address(aname,atel,apid) values
+			<foreach collection="person.addresses" item="temp" separator=",">
+				(#{temp.addressName},#{temp.addressTel},#{person.pid})
+			</foreach>
+		</if>
+	</insert>
+
+</mapper>

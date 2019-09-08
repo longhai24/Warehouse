@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+
+<title>会员列表</title>
+
+</head>
+
+<body>
+	<h3>
+		欢迎<span style="color: red">XXX</span>用户
+	</h3>
+	<input id="txtName" type="search" placeholder="请输入会员名" />
+	<input id="find" type="button" value="查询" />
+	<br />
+	<table border="1" width="500">
+		<thead>
+			<tr>
+				<th>序号</th>
+				<th>会员名</th>
+				<th>密&nbsp;码</th>
+				<th>操&nbsp;作</th>
+			</tr>
+		</thead>
+		<tbody id="content">
+
+		</tbody>
+	</table>
+</body>
+
+<script src="../js/jquery-1.12.4.js"></script>
+
+<script>
+	//window.sessionStorage 会话缓存对象 ，客户端技术
+	//ajax全局设置
+	$.ajaxSetup({
+		timeout:5000
+	});
+	
+	$(document).ajaxError(function(){
+		alert("服务器正忙....");
+	});
+	
+	//绑定session
+	$.getJSON("/ajax_2/member",{m:"getMember"},function(data){
+		$("h3>span").text(data.userName);
+	});
+	
+	//动态节点事件绑定
+	$(document).on("click",".del",function(e){
+		var txt=$(this).parents("tr").find("td:eq(1)").text();
+		if(confirm('是否移除？')){
+			$.getJSON("/ajax_2/member",{m:"delete",name:txt},function(data){
+				if(data.code=="200"){
+					alert("移除成功");
+					fnLoadList("/ajax_2/member",{m:"query"});
+				}
+			});
+		}
+	});
+	
+	
+	//动态节点事件绑定
+	$(document).on("click",".update",function(e){
+		var txt=$(this).parents("tr").find("td:eq(1)").text();
+		window.sessionStorage.setItem("name",txt);//存储数据
+		location.href="info.html";
+	});
+	
+	//模糊查询
+	$("#find").click(function(){
+		var txt = $(this).prev().val();
+		fnLoadList("/ajax_2/member",{m:"find",name:txt});
+	});
+	
+	//列表初始化
+	function fnLoadList(url,dataCnt){
+		//发送ajax请求
+		$.ajax(url,{
+			type:"get",
+			data:dataCnt,
+			dataType:"json",
+			success:function(data){
+				$("#content").html("");
+				//alert(JSON.stringify(data));//序列化
+				$.each(data,function(i,temp){
+					var $row=$("<tr><td>"+(i+1)+"</td><td>"+temp.userName+"</td><td>***</td><td><a class='del' href='#'>移除</a>&nbsp;<a class='update' href='#'>更新</a></td></tr>");
+					$("#content").append($row);	
+				});
+				
+			},
+			beforeSend:function(){
+				$("#content").html("");
+				$("#content").append("<tr><th colspan='4'><img src='../images/loading.gif'/></th></tr>");	
+			}
+		});
+	}
+	fnLoadList("/ajax_2/member",{m:"query"});
+</script>
+
+</html>

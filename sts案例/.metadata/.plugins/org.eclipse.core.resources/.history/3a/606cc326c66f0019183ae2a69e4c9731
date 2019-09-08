@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.sum3">
+	<select id="selAll" resultType="map">select * from stu</select>
+	<insert id="add" parameterType="entity.Stu">insert into
+		stu(stuno,stuname,stusex,stuage)
+		values(#{stuno},#{stuname},#{stusex},#{stuage})
+	</insert>
+	<delete id="del">delete from stu where stuno=#{0}</delete>
+	<update id="update" parameterType="entity.Stu">
+	update stu set stuname=#{stuname},stusex=#{stusex},stuage=#{stuage} where stuno=#{stuno}
+	</update>
+	<select id="selSome" resultType="map" parameterType="int">
+	SELECT * FROM stu WHERE stuname LIKE CONCAT('%',#{0},'%')
+	</select>
+</mapper>

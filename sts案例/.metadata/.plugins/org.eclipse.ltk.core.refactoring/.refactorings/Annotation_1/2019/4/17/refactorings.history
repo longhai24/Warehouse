@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete element from project &apos;Annotation_1&apos;&#x0D;&#x0A;- Original project: &apos;Annotation_1&apos;&#x0D;&#x0A;- Original element: &apos;Annotation_1/src/com.accp.T1.dao.entity&apos;" description="Delete element" element1="/src&lt;com.accp.T1.dao.entity" element2="/src&lt;com.accp.T1.dao" element3="/src&lt;com.accp.T1" element4="/src&lt;com.accp" element5="/src&lt;com" elements="5" flags="589830" id="org.eclipse.jdt.ui.delete" resources="0" stamp="1556094450659" subPackages="false" version="1.0"/>
+</session>

@@ -1,0 +1,223 @@
+package com.accp.Test.dao;
+
+import java.lang.reflect.Field;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import com.accp.Test.annotation.Column;
+import com.accp.Test.annotation.Table;
+@SuppressWarnings("all")
+public class CommonDao extends BaseDao{
+	
+
+	/**
+	 * 修改单个bean的数据
+	 * where条件有且只能有一个
+	 * @param obj 要修改的Javabean
+	 * @param fieldName 作为where条件的Javabean属性
+	 * @param vague 是否模糊条件(True为模糊)
+	 * @return 受影响的行数
+	 */
+	public int upd(Object obj,String fieldName,boolean vague){
+		ResultSet rs = null;
+		String tblName=null;
+		String sql=null;
+		StringBuffer setNames=new StringBuffer();
+		StringBuffer where=new StringBuffer();
+		try {
+			Class cls=obj.getClass();
+			//获得表名
+			if(cls.isAnnotationPresent(Table.class)) {
+				Table tbl=(Table) cls.getDeclaredAnnotation(Table.class);
+				tblName=tbl.value();
+			}
+			int index = 0;//遍历下标
+			//遍历实参的所有属性 不为空则拼接SQL
+			for (Field f:obj.getClass().getDeclaredFields()
+			) {
+				f.setAccessible(true);
+				//如果属性不为null并且!=""
+				if (f.get(obj)!=null&&!(f.get(obj).equals(""))){
+					//如果当前属性是作为where条件
+					if (where!=null&&!(where.equals(""))&&fieldName.equals(f.getName())) {
+						where.append(ifVague(vague, f, obj));
+					}else {
+						//如果当前列名是主键则continue
+						if (f.isAnnotationPresent(Column.class)){
+							Column c=f.getDeclaredAnnotation(Column.class);
+							//如果是主键 不修改
+							if(c.isPrimaryKey()){
+								continue;
+							}
+						}
+						//如果不是主键也不是where条件 则记录遍历次数  index++
+						index++;
+						//首次遍历 拼接set
+						if(index==1){
+							if (f.isAnnotationPresent(Column.class)){
+								Column c=f.getDeclaredAnnotation(Column.class);
+								setNames.append(" set ");
+								setNames.append(" "+c.name()+" ");
+								setNames.append(" = ");
+								setNames.append("\'"+f.get(obj)+"\'");
+							}
+						} else if (index>1) {
+							//第二次或N次遍历 拼接  ","
+							if (f.isAnnotationPresent(Column.class)){
+								setNames.append(",");
+								Column c=f.getDeclaredAnnotation(Column.class);
+								setNames.append(" "+c.name()+" ");
+								setNames.append(" = ");
+								setNames.append("\'"+f.get(obj)+"\'");
+							}
+						}
+					}
+				}
+			}
+			//动态拼接
+			sql="update %s %s where %s";
+			//如果where条件的列名不存在或为空 自动凭借万能条件1=1   也可以抛异常
+			if (where==null||where.toString().equals("")) {
+				throw new RuntimeException("请传递有效参数");//where条件错误
+				//where = new StringBuffer(" 1=1 ");
+			}
+			//如果遍历次数为0次 也就是参数全为null或""
+			if (index==0) {
+				throw new RuntimeException("请传递有效参数");
+			}
+			sql=String.format(sql, tblName,setNames.toString(),where.toString());
+			int count=super.Update(sql);
+			return count;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		} finally {
+			try {
+				super.Close(pst, conn);
+			} catch (Exception ex) {
+				throw new RuntimeException(ex);
+			}
+		}
+	}
+	
+	//查询所有
+	public <T> List<T> queryAllColumn(Class<T> cls) {
+		ResultSet rs = null;
+		List<T> data;
+		String tblName = null;
+		try {
+			// 1.从类的元注解中获得表名
+			if (cls.isAnnotationPresent(Table.class)) {
+				// 获得指定元注解
+				Table tbl = cls.getDeclaredAnnotation(Table.class);
+				tblName = tbl.value();
+			}
+			rs = super.Select("select * from " + tblName);
+			data = new ArrayList<T>();
+			// 2.从字段的元注解中获得列名
+			while (rs.next()) {
+				// 1.获得构造方法,并且实例化
+				Object obj = cls.newInstance();
+				// 2.获得属性，并且赋值
+				for (Field f : cls.getDeclaredFields()) {
+					if (f.isAnnotationPresent(Column.class)) {
+						Column column = f.getDeclaredAnnotation(Column.class);
+						f.setAccessible(true);
+						f.set(obj, rs.getObject(column.name()));
+					}
+				}
+				data.add((T) obj);
+			}
+			return data;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException ex) {
+				throw new RuntimeException(ex);
+			}
+		}
+	}
+	//新增
+	public int save(Object obj) {
+		String sql = "insert into %s(%s) values(%s)";
+		String tblName = null;
+		StringBuffer clName = new StringBuffer();
+		StringBuffer clValue = new StringBuffer();
+		try {
+			Class cls = obj.getClass();
+			// 1.从类的元注解中获得表名
+			if (cls.isAnnotationPresent(Table.class)) {
+				// 获得指定元注解
+				Table tbl = (Table) cls.getDeclaredAnnotation(Table.class);
+				tblName = tbl.value();
+			}
+			for (Field f : cls.getDeclaredFields()) {
+				f.setAccessible(true);
+				if (f.isAnnotationPresent(Column.class)) {
+					Column col = f.getDeclaredAnnotation(Column.class);
+					if (!col.isIdentity()) {
+						clName.append(col.name()).append(",");// 列名
+						if (col.type().equals("varchar")) {
+							clValue.append("'").append(f.get(obj)).append("',");
+						} else {
+							clValue.append(f.get(obj)).append(",");
+						} // 列值
+					}
+				}
+			}
+			// 移除最后一个逗号
+			clName.replace(clName.length() - 1, clName.length(), "");
+			clValue.replace(clValue.length() - 1, clValue.length(), "");
+			sql = String.format(sql, tblName, clName.toString(), clValue.toString());
+			return super.Update(sql);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+	 
+	
+	//拼接where
+		public String ifVague(boolean vague,Field f,Object obj) throws Exception {
+			StringBuffer where = new StringBuffer();
+			if (f.isAnnotationPresent(Column.class)){
+				Column c=f.getDeclaredAnnotation(Column.class);
+				where.append(c.name());
+				//如果是模糊查询
+				if (vague) {
+					where.append(" like ");
+					where.append("\'%"+f.get(obj)+"%\'");
+				}else {
+					where.append(" = ");
+					where.append(" "+f.get(obj)+" ");
+				}
+
+			}
+			return where.toString();
+		}
+	
+	//删除
+	public int delete(Class cls,Map<String, Object> map) {
+		String tabName=null;
+		if(cls.isAnnotationPresent(Table.class)) {
+			Table tab=(Table) cls.getDeclaredAnnotation(Table.class);
+			tabName=tab.value();
+		}
+		String sql="delete from "+tabName+" where 1=1";
+		if(map!=null) {
+			Iterator iter = map.entrySet().iterator();
+				while (iter.hasNext()) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					Object key = entry.getKey();
+					Object val = entry.getValue();
+					sql+=" and "+key+"='"+val+"'";
+				}
+		}
+		System.out.println("删除的sql"+sql);
+		return super.Update(sql);
+	}
+}

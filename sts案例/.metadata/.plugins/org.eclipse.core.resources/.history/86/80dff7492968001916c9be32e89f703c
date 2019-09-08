@@ -1,0 +1,114 @@
+package com.accp.mycommon.dao;
+
+import java.sql.*;
+import org.apache.log4j.Logger;
+
+import com.accp.factory.ConnectionFactory;
+import com.accp.factory.UnPoolConnectionFactory;
+
+@SuppressWarnings("all")
+public abstract class BaseDao {
+
+	private ConnectionFactory cf = UnPoolConnectionFactory.getInstance();// 鍗曚緥妯″紡鑾峰緱杩炴帴瀵硅薄
+
+	private static Logger logger = Logger.getRootLogger();
+
+	/**
+	 * 
+	 * @title: bindingParam
+	 * @description: 缁戝畾鍙傛暟
+	 * @param ps
+	 * @param params
+	 * @throws SQLException
+	 */
+	private void bindingParam(PreparedStatement ps, Object... params) throws SQLException {
+		if (params != null) {
+			for (int i = 0; i < params.length; i++) {
+				ps.setObject(i + 1, params[i]);
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @title: update
+	 * @description: jdbc鏇存柊
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
+	protected int executeUpdate(String sql, Object... params) {
+		logger.debug("鎵цSQL:" + sql);
+		Connection conn = cf.getConnection();//鑾峰緱浜у搧
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement(sql);
+			bindingParam(ps, params);
+			return ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @title: executeQuery
+	 * @description: jdbc鏌ヨ
+	 * @param ps
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
+	protected ResultSet executeQuery(String sql, Object... params) {
+		logger.debug("鎵цSQL:" + sql);
+		try {
+			PreparedStatement ps = cf.getConnection().prepareStatement(sql);
+			bindingParam(ps, params);
+			return ps.executeQuery();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * 
+	 * @title: close
+	 * @description: 閲婃斁璧勬簮
+	 */
+	public void close() {
+		cf.releaseConnection();//閿�姣佷骇鍝�
+	}
+
+	/**
+	 * 
+	 * @title: commit
+	 * @description: 鎻愪氦浜嬪姟
+	 */
+	public void commit() {
+		try {
+			cf.getConnection().commit();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * 
+	 * @title: rollback
+	 * @description: 鍥炴粴浜嬪姟
+	 */
+	public void rollback() {
+		try {
+			cf.getConnection().rollback();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+}

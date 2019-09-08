@@ -1,0 +1,160 @@
+
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="zh-cn">
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+		<title>管理人员-管理</title>
+		<link rel="stylesheet" type="text/css" href="../css/style_admin.css">
+</head>
+<body>
+		<table cellspacing="1" cellpadding="4" width="100%"
+			class="tableborder" id="table3">
+			<form name="form1" action="showUserList.jsp" method="post">
+			<tr>
+				<td colspan="15" class="header">
+					用户管理
+				</td>
+			</tr> 
+			<tr>
+				<td align="center" class="altbg1">
+					<b>用户名</b>
+				</td>
+				<td align="center" class="altbg1">
+					<b>角色</b>
+				</td>
+				<td align="center" class="altbg1">
+					<b>状态</b>
+				</td>
+				<td align="center" class="altbg1">
+					<b>操作</b>
+				</td>
+			</tr>
+
+
+			</form>
+			
+			
+
+			
+			
+			
+			</table>
+</body>
+<script type="text/javascript" src="../static/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+	function liqi(ll){
+		var obj = window.sessionStorage.getItem("selfuse");
+		var suse = eval('('+obj+')');
+		var selfrid = suse.ro.rid;
+		var selfuid = suse.userid;
+		var othersuid = ll.parents("tr").find("input:eq(0)").val();
+		var othersrid = ll.parents("tr").find("input:eq(1)").val();
+		if(selfrid <= othersrid ){ // 判断是否平级
+			if(selfrid == othersrid){ // 平级
+				if(selfuid == othersuid){ //平级的时候不能操作别人
+					 window.sessionStorage.setItem("rich","ok");
+					alert("操作自己")
+					return othersuid;
+				}else{
+					alert("不能操作平级用户!")
+					return -1;
+				}
+			}else{
+// 				alert("操作下级")
+				return othersuid;
+			}
+		}else{
+			alert("权限不够!")
+			return -1;
+		}
+	}
+	//删除
+	$(document).on("click",".ads",function(){ 
+		var thi = $(this)
+		var o = liqi(thi)
+			if(o > -1){
+				var rich = window.sessionStorage.getItem("rich");
+				window.sessionStorage.setItem("rich","0");
+				if("ok" == rich){
+					alert("抱歉,不能冻结自己!");
+					return false;
+				}
+				if(confirm("确定要冻结用户名为:"+thi.parents("tr").find("td:eq(0)").text()+"的用户吗?")){
+					$.ajax({
+						type:"post",
+						url:"/aiccse/c/goods?usr=usezing",
+						dataType:"json",
+						data:{uid:o},
+						success:function(result){
+							if(result.code == 200){
+// 								alert("操作成功")
+// 								thi.parents("tr").remove();
+								var rich = window.sessionStorage.getItem("rich");
+								window.sessionStorage.setItem("rich","0");
+								if("ok" == rich){
+									//如果操作的自己请重新登陆
+									alert("您的账户已更改,请重新登陆!")
+									$.ajax({
+										type:"post",
+										url:"/aiccse/c/goods?usr=outuse",
+										data:"",
+										dataType:"text",
+										success: function(result) {
+											if("ok" == result){
+												 window.parent.location.href="login.html"
+											}else{
+												alert("退出失败")
+											}
+											return false;
+										}
+									});
+								}else{
+									thi.parents("tr").find("td:eq(2)").html("冻结");
+								}
+							}
+							alert(result.msg)
+						}
+					})
+				}
+			}
+	})
+	//修改
+	$(document).on("click",".adx",function(){ 
+		var thi = $(this)
+		var o = liqi(thi)
+		if(o > -1){
+			window.sessionStorage.setItem("othersuid",o);
+			window.location.href="updateManager.html";
+		}
+	})
+	$.ajax({
+		type:"post",
+		url:"/aiccse/c/goods?usr=selectuser",
+		dataType:"json",
+		data:"",
+		success:function(result){
+			$.each(result, function(i,j) {
+				var tr = $("<tr>");
+				var uid = $('<input type="hidden"/>').val(j.userid);
+				var name = $('<td align="center" class="altbg2"></td>').html(j.username).append(uid);
+				var rid = $('<input type="hidden"/>').val(j.ro.rid);
+				var role = $('<td class="altbg2" align="center"></td>').html(j.ro.rname).append(rid);
+				var ads = $("<a class='ads'>").html("[冻结] &nbsp&nbsp");
+				var adx = $("<a class='adx'>").html("[修改]");
+				var cz = $('<td class="altbg2"  align="center"></td>').append(ads).append(adx)
+				if(j.uzing == 0){
+					var uzing = $('<td class="altbg2" align="center">可用</td>')
+					tr.append(name).append(role).append(uzing).append(cz)
+				}else if(j.uzing == 1){
+					var uzing = $('<td class="altbg2" align="center">冻结</td>')
+					tr.append(name).append(role).append(uzing).append(cz)
+				}else{
+					var uzing = $('<td class="altbg2" align="center">未知</td>')
+					tr.append(name).append(role).append(uzing).append(cz)
+				}
+				$('tbody').append(tr);
+			});
+		}
+	});	
+</script>
+</html>

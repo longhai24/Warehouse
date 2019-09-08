@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ 
+ <mapper namespace="com.accp.dao.UserIDao">
+<!--  	登陆 -->
+ 	<select id="login" resultMap="findgroup">
+ 		SELECT * FROM `user` WHERE `uname` = #{name} AND `upwd` = #{pwd}
+ 	</select>
+ 	<resultMap type="user" id="findgroup">
+ 		<association property="g" column="gid" select="sgroup"></association>
+ 	</resultMap>
+<!--  	查询自己所在得组 -->
+ 	<select id="sgroup" resultType="Group">
+ 		select * from `group` where gid = #{0}
+ 	</select>
+<!--  	注册用户 -->
+	<insert id="adduser">
+		INSERT INTO `user` (`uname`,`upwd`,`uEmail`
+			<if test="u.gid != null and u.gid != ''">
+				,`gid`
+			</if>
+		) 
+		VALUES(#{u.name},#{u.pwd},#{u.emial}
+			<if test="u.gid != null and u.gid != ''">
+				,#{u.gid}
+			</if>
+		)
+	</insert>
+<!--	注册-->
+ </mapper>

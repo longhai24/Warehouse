@@ -1,0 +1,141 @@
+
+
+<html>
+<head>
+<META http-equiv="Content-Type" CONTENT="text/html;charset=utf-8">
+</head>
+<link href="../css/right.css" rel="stylesheet" type="text/css" />
+
+<BODY leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+	<TABLE height=28 cellSpacing=3 cellPadding=0 width=776 align=center
+		background=zjej/btmunu.gif border=0>
+		<TBODY>
+			<TR vAlign=bottom>
+				<TD>&nbsp;&nbsp;<A class=nav href="index.asp">首页</A><FONT
+					class=nav> &gt; </FONT><A class=nav href="#">企业建站</A></TD>
+			</TR>
+		</TBODY>
+	</TABLE>
+	<TABLE height=1 cellSpacing=0 cellPadding=0 width=776 align=center
+		bgColor=#cccccc border=0>
+		<TBODY>
+			<TR>
+				<TD></TD>
+			</TR>
+		</TBODY>
+	</TABLE>
+	<TABLE cellSpacing=0 cellPadding=0 width=776 align=center border=0>
+		<TBODY>
+			<TR>
+				<TD vAlign=top width=195 background=zjej/ny3.gif bgColor=#ffffff
+					height=186></TD>
+				<TD vAlign=top width=3 bgColor=#e8e8e8></TD>
+				<td valign="top" bgcolor="#ffffff" height="300">
+					<form action="a" method="post" name="form1">
+						<table width="399" border="0" align="center" cellpadding="0"
+							cellspacing="0" bordercolor="#EBEBEB">
+							<tr>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+							</tr>
+							<tr align="left">
+								<td height="35" colspan="2" bgcolor="#EAF0FB" class="p16">
+									<div align="center">
+										<span class="d6"><strong>管 理 员 登 录 </strong></span>
+									</div>
+								</td>
+							</tr>
+
+							<tr>
+								<td width="141" height="45" align="center" bgcolor="#EBEBEB"
+									class="d5">您的帐号：</td>
+								<td width="258" align="left" bgcolor="#EBEBEB"><input
+									name="userName" type="text" /></td>
+							</tr>
+							<tr>
+
+							</tr>
+							<tr>
+								<td height="45" align="center" bgcolor="#EBEBEB" class="d5">
+									您的密码：</td>
+								<td align="left" bordercolor="#EBEBEB" bgcolor="#EBEBEB"><input
+									name="password" type="password" size="21" /></td>
+							</tr>
+							<tr align="left">
+								<td height="35" colspan="2" align="right" bgcolor="#EAF0FB"
+									class="p16">
+									<div align="right">
+										<span class="d6"><strong>&nbsp;</strong></span>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td height="60" colspan="2" valign="bottom">
+									<div align="center">
+										<input name="submit" type="submit" class="d6" value="登  录" />
+										&nbsp;&nbsp;&nbsp;&nbsp; <input name="reset" type="reset"
+											class="d6" value="重  置" />
+									</div>
+								</td>
+							</tr>
+							<tr>
+
+							</tr>
+						</table>
+					</form>
+				</td>
+			</TR>
+		</TBODY>
+	</TABLE>
+</BODY>
+<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+if (window.history && window.history.pushState) {            
+    $(window).on('popstate', function () {                
+        window.history.pushState('forward', null, '');                
+        window.history.forward(1);                
+        self.location="login.html";   
+    });        
+} 
+if(window.sessionStorage.getItem("uname")==""){
+   window.history.pushState('forward', null, ''); //在IE中必须得有这两行        
+   window.history.forward(1); 
+};
+	$("input").eq(2).click(function() {
+		
+		var uid = $("input").eq(0).val();
+		var upwd = $("input").eq(1).val();
+		$.ajax({
+			url : "http://localhost:8080/Goods/c/GoodsAction?method=login",
+			data : {
+				uid : uid,
+				upwd : upwd
+			},
+			type : "post",
+			dataType:"json",
+			success : function(data) {
+				if (data !=null) {
+					//将用户名传给了主页
+					alert("登陆成功")
+					window.sessionStorage.setItem("checkType", 1);
+					window.sessionStorage.setItem("uname",data.username);
+					window.sessionStorage.setItem("rid", data.rid);
+					window.sessionStorage.setItem("uid", data.userid);
+					window.location.href = "http://localhost:8080/Goods/html/index.html";
+				} else {
+					alert("登录失败")
+				}
+			}
+		})
+
+		return false;
+	})
+</script>
+</HTML>
+
+

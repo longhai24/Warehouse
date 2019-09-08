@@ -1,0 +1,3 @@
+Spring_MyBaits整合步骤:
+1.搭建SM的JAR包环境，修改pom.xml，添加MyBatis和SpringMyBatis插件jar依赖
+2.删除Mybatis的config文件中的数据源配置,其他不变

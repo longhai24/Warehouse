@@ -1,0 +1,107 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Language" content="zh-cn">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>管理人员-管理</title>
+<link rel="stylesheet" type="text/css" href="../css/style_admin.css">
+</head>
+<body>
+	<table cellspacing="1" cellpadding="4" width="100%" class="tableborder"
+		id="table3">
+		<thead>
+			<tr>
+				<td colspan="15" class="header">商品管理</td>
+			</tr>
+			<tr>
+				<td align="center" class="altbg1"><b>商品编号</b></td>
+				<td align="center" class="altbg1"><b>商品名称</b></td>
+				<td align="center" class="altbg1"><b>商品商标</b></td>
+				<td align="center" class="altbg1"><b>商品型号</b></td>
+				<td align="center" class="altbg1"><b>商品价格</b></td>
+				<td align="center" class="altbg1"><b>修改</b></td>
+				<td align="center" class="altbg1"><b>删除</b></td>
+			</tr>
+		</thead>
+		<tbody>
+			<form name="form1" action="showUserList.jsp" method="post">
+		</tbody>
+
+	</table>
+</body>
+<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+	//ajax全局设置
+// 	$.ajaxSetup({
+// 		timeout : 5000
+// 	});
+
+// 	$(document).ajaxError(function() {
+// 		alert("服务器正忙....");
+// 	});
+	
+	$.ajax({
+		url:"http://localhost:8080/Goods/c/GoodsAction?method=selPro",
+		dataType:"json",
+		data:"",
+		type:"post",
+		success: function(data) {
+			for ( var i in data) {
+				var tr = $("<tr></tr>");
+				var td1 = $("<td align='center' class='altbg2'>"+data[i].pid+"</td>")
+				var td2 = $("<td align='center' class='altbg2'>"+data[i].pname+"</td>")
+				var td3 = $("<td align='center' class='altbg2'>"+data[i].pflag+"</td>")
+				var td4 = $("<td align='center' class='altbg2'>"+data[i].ptype+"</td>")
+				var td5 = $("<td align='center' class='altbg2'>"+data[i].pprice+"</td>")
+				var td6 = $("<td align='center' class='altbg2'> <a href='' class='update'>修改</a></td>")
+				var td7 = $("<td align='center' class='altbg2'><a  href='' class='del'>删除</a></td>")
+				tr.append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7);
+				$("tbody").append(tr);
+			}
+		}
+	})
+	
+	$(document).on("click",".update",function(e){
+		var pid=$(this).parents("tr").find("td:eq(0)").text();
+		var pname=$(this).parents("tr").find("td:eq(1)").text();
+		var pflag=$(this).parents("tr").find("td:eq(2)").text();
+		var ptype=$(this).parents("tr").find("td:eq(3)").text();
+		var pprice=$(this).parents("tr").find("td:eq(4)").text();
+		window.sessionStorage.setItem("pid",pid);//存储数据
+		window.sessionStorage.setItem("pname",pname);//存储数据
+		window.sessionStorage.setItem("pflag",pflag);//存储数据
+		window.sessionStorage.setItem("ptype",ptype);//存储数据
+		window.sessionStorage.setItem("pprice",pprice);//存储数据
+		$.ajax({
+			url:"http://localhost:8080/Goods/c/GoodsAction?method=selImg",
+			data:{pid1:pid},
+			type:"post",
+			success: function(data) {
+				var pimg = data;
+				window.sessionStorage.setItem("pimg",pimg);//存储数据
+				window.location.href="updateProduct.html";
+			}
+			})
+		return false;
+	});
+	
+	$(document).on("click",".del",function(e){
+		var txt=$(this).parents("tr").find("td:eq(0)").text();
+		if (confirm("确认删除吗")) {
+			$.ajax({
+				url:"http://localhost:8080/Goods/c/GoodsAction?method=del",
+				type:"post",
+				dataType:"json",
+				data:{did:txt},
+				success: function(data) {
+					if (data.fir=="200") {
+						alert(data.sec)
+					}
+				}
+			})
+		}
+		
+	});
+	
+</script>
+</html>

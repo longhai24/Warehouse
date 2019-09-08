@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<!-- 自定义类型别名 -->
+	<typeAliases>
+			<!-- 单个自定义 -->
+			<!-- <typeAlias type="com.accp.pojo.Person" alias="a"/> -->
+			<!-- 包级定义 -->
+			<package name="com.accp.pojo"/>
+			<package name="com.accp.vo"/>
+	</typeAliases>
+	
+	<!-- 2.分页插件设置【非常重要】 -->
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageHelper">
+			<!-- 设置数据库类型 Oracle,Mysql,MariaDB,SQLite,Hsqldb,PostgreSQL六种数据库 -->
+			<property name="dialect" value="mysql" />
+			<!-- 设置为true时，使用RowBounds分页会进行count查询 -->
+			<property name="rowBoundsWithCount" value="true" />
+		</plugin>
+	</plugins>
+	<!-- 数据库环境 -->
+	<environments default="mysqlEnv">
+		<!-- mysql -->
+		<environment id="mysqlEnv">
+			<!-- 事务管理 -->
+			<transactionManager type="JDBC" />
+			<!-- 连接信息 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver" />
+				<property name="url"
+					value="jdbc:mysql://localhost:3306/rent?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true" />
+				<property name="username" value="root" />
+				<property name="password" value="lq926494" />
+				<property name="poolMaximumActiveConnections" value="20" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<!-- 关联sql映射 -->
+	<mappers>
+		<mapper resource="mapper.xml" />
+		<mapper resource="House.xml"/>
+		<mapper resource="City.xml"/>
+	</mappers>
+
+
+</configuration>

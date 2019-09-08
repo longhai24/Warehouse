@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.dao.IAirInfo">
+	<select id="selectAll" resultType="AirInfo">
+		SELECT * FROM `airinfo`
+		<where>
+			<if test="air.id != null">
+				and id = #{air.id}
+			</if>
+			<if test="air.flight_number != null">
+				and flight_number = #{air.flight_number}
+			</if>
+			<if test="air.destination != null">
+				and destination = #{air.destination}
+			</if>
+			<if test="air.flight_date != null">
+				and flight_date = #{air.flight_date}
+			</if>
+		</where>
+	</select>
+
+	<delete id="delete">
+		delete from `airinfo`
+		<where>
+			<if
+				test="air.id == null and air.flight_number == null and air.destination == null and air.flight_date == null">
+				1=2
+			</if>
+			<if test="air.id != null">
+				and id = #{air.id}
+			</if>
+			<if test="air.flight_number != null">
+				and flight_number = #{air.flight_number}
+			</if>
+			<if test="air.destination != null">
+				and destination = #{air.destination}
+			</if>
+			<if test="air.flight_date != null">
+				and flight_date = #{air.flight_date}
+			</if>
+		</where>
+	</delete>
+	<update id="update">
+		update `airinfo`
+		<set>
+			<if test="air.flight_number != null">
+				flight_number = #{air.flight_number},
+			</if>
+			<if test="air.destination != null">
+				destination = #{air.destination},
+			</if>
+			<if test="air.flight_date != null">
+				flight_date = #{air.flight_date},
+			</if>
+		</set>
+		where id = #{air.id}
+	</update>
+	<insert id="addition">
+		INSERT INTO `airinfo` (`id`,`flight_number`,`destination`,`flight_date`)VALUES()
+		values(#{air.id},#{air.flight_number},#{air.destination},#{air.flight_date})
+	</insert>
+</mapper>

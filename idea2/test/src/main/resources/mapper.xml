@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.dao.IbillDao">
+	<select id="selectAll" resultMap="BillMap">
+		select * from `tb_bill`  where `billno` = #{billno}
+	</select>
+	<resultMap type="com.accp.pojo.Bill" id="BillMap">
+<!-- 		<id column="billno" property="billno" /> -->
+<!-- 		<result column="billdate" property="billdate" /> -->
+<!-- 		<result column="suppliername" property="suppliername" /> -->
+<!-- 		<result column="supplieraddress" property="supplieraddress" /> -->
+<!-- 		<result column="department" property="department" /> -->
+<!-- 		<result column="warehouse" property="warehouse" /> -->
+<!-- 		<result column="buyer" property="buyer" /> -->
+<!-- 		<result column="executor" property="executor" /> -->
+		<collection property="detail" column="billno" select="selectdetail"></collection>
+	</resultMap>
+	<select id="selectdetail" resultType="com.accp.pojo.Detail">
+		select * from `tb_detail` where `billno` = #{0}
+	</select>
+	<delete id="delete">
+		delete from `tb_detail` where `billno` = #{billno};
+		delete from `tb_bill` where `billno` = #{billno}
+	</delete>
+</mapper>

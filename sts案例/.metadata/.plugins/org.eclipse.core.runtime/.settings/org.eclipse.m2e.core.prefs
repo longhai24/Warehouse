@@ -1,0 +1,11 @@
+eclipse.m2.debugOutput=true
+eclipse.m2.defaultRuntime=maven3.3.1
+eclipse.m2.downloadJavadoc=true
+eclipse.m2.downloadSources=true
+eclipse.m2.globalSettingsFile=C\:\\maven3.3.1\\conf\\settings.xml
+eclipse.m2.runtimes=maven3.3.1
+eclipse.m2.runtimesNodes/maven3.3.1/location=C\:\\maven3.3.1
+eclipse.m2.runtimesNodes/maven3.3.1/type=EXTERNAL
+eclipse.m2.userSettingsFile=C\:\\maven3.3.1\\conf\\settings.xml
+eclipse.m2.warn_incomplete_mapping=true
+eclipse.preferences.version=1

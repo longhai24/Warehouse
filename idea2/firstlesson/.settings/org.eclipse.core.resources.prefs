@@ -1,0 +1,10 @@
+eclipse.preferences.version=1
+encoding//WebContent/WEB-INF/jsp/Section.jsp=UTF-8
+encoding//WebContent/WEB-INF/jsp/Staff.jsp=UTF-8
+encoding//WebContent/WEB-INF/jsp/Studnet.jsp=UTF-8
+encoding//WebContent/WEB-INF/jsp/Tender.jsp=UTF-8
+encoding//src/com/accp/ajax/dao/BaseDao.java=UTF-8
+encoding//src/com/accp/ajax2/dao/BaseDao.java=UTF-8
+encoding//src/com/accp/one/dao/BaseDao.java=UTF-8
+encoding//src/com/accp/tow/dao/BaseDao.java=UTF-8
+encoding/<project>=UTF-8

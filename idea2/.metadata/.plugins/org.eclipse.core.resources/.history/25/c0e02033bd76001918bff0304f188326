@@ -1,0 +1,188 @@
+package com.accp.action;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.junit.runner.Request;
+
+import com.accp.biz.UserBiz;
+import com.accp.pojo.District;
+import com.accp.pojo.House;
+import com.accp.pojo.HouseType;
+import com.accp.pojo.Street;
+import com.accp.pojo.user;
+import com.accp.util.CgLibTransProxyUtil;
+import com.accp.util.feupdate;
+import com.accp.vo.HouseFabuVo;
+import com.accp.vo.PlacevO;
+import com.alibaba.fastjson.JSON;
+
+/**
+ * Servlet implementation class UserAction
+ */
+public class UserAction extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private UserBiz biz = CgLibTransProxyUtil.getTransProxyObject(UserBiz.class);
+	private String place = "1"; //地址.位置(城市)
+	private String sfile = "";
+	private HttpSession session;
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public UserAction() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String usr = request.getParameter("usr");
+		// 判断是否为空或者跳页面
+		if (usr == null) {
+			request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+		} else if (usr.startsWith("skip")) { // 跳页面
+			this.skip(usr, request, response);
+		} else { // 操作
+			try {
+				Method method = this.getClass().getDeclaredMethod(usr, HttpServletRequest.class,
+						HttpServletResponse.class);
+				method.invoke(this, request, response);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	/**
+	 * 跳页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void skip(String usr, HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String name = usr.substring(usr.indexOf("-") + 1, usr.length());
+		if ("regs".equals(name)) {
+			request.getRequestDispatcher("/WEB-INF/jsp/regs.jsp").forward(request, response);
+		} else if ("fabu".equals(name)) {
+			List<HouseType> housetypelist = biz.findHouseType();
+			List<District> dis = biz.findDis(place);
+			request.setAttribute("dislist", dis);
+			request.setAttribute("housetypelist", housetypelist);
+			request.getRequestDispatcher("/WEB-INF/jsp/fabu.jsp").forward(request, response);
+		}
+	}
+
+	/**
+	 * 添加用户注册
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void addUser(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String name = request.getParameter("name");
+		String pwd = request.getParameter("password");
+		String telephone = request.getParameter("telephone");
+		String username = request.getParameter("username");
+		user u = new user(name, pwd, telephone, username);
+		int i = biz.addUser(u);
+		if (i > 0) {
+			response.sendRedirect("user");
+		}
+	}
+
+	/**
+	 * 用户登陆
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void finduser(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String name = request.getParameter("name");
+		String pwd = request.getParameter("password");
+		user u = biz.findUser(name, pwd);
+		if (u != null) {
+			//将自己登陆传入session
+			session = request.getSession();
+			session.setAttribute("user", u);
+			
+			// 登陆成功后并查询自己的房屋跳guanli.jsp
+			List<House> list = biz.findHouses(u);
+			request.setAttribute("Houselist", list);
+			request.getRequestDispatcher("/WEB-INF/jsp/guanli.jsp").forward(request, response); // 登陆成功
+		} else {
+			response.getWriter().write("<script type=\"text/javascript\">\r\n" + "	alert(\"账号或密码出错!\")\r\n"
+					+ "	window.location.href='user'\r\n" + "</script>");
+		}
+	}
+
+	/**
+	 * fabu.jsp发布房屋信息
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void addhouse(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		String title = request.getParameter("title");
+		String himg  = request.getParameter("himg");
+		String type_id = request.getParameter("type_id");
+		String floorage = request.getParameter("floorage");
+		String price = request.getParameter("price");
+		String houseDate = request.getParameter("houseDate");
+		String street_id = request.getParameter("street_id");
+		String contact = request.getParameter("contact");
+		String description = request.getParameter("description");
+		user u = (user)session.getAttribute("user");
+		HouseFabuVo fabu = new HouseFabuVo(title, sfile, type_id, floorage, price, houseDate, street_id, contact, description, u);
+		
+		sfile ="";
+	}
+	/**
+	 * 获取当前区的街道
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void findstreed(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		String did = request.getParameter("did");
+		List<Street> Streetlist = biz.findStreet(did);
+		response.getWriter().write(JSON.toJSONString(Streetlist));
+	}
+	/**
+	 * 文件上传
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void sfile(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+		sfile = new feupdate().sfile(request, response);
+	}
+
+
+}

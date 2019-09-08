@@ -1,0 +1,190 @@
+
+<html>
+
+	<head>
+		<meta http-equiv="Content-Language" content="zh-cn">
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+		<title>商品-修改</title>
+		<link rel="stylesheet" type="text/css" href="../css/style_admin.css">
+		
+		<script type="text/javascript">
+		function fun_check_form(){
+			if(document.form1.name.value==""){
+				alert("请输入新闻标题信息。");
+				return false;
+			}else if(document.form1.serialNumber.value==""){
+				alert("请输入新闻内容。");
+				return false;
+			}else{
+				return true;
+			}
+		}
+		
+		</script>
+	</head>
+
+	<body>
+		<form name="form1" action="updateProduct.jsp" method="post" onSubmit="return fun_check_form()">
+			<table cellspacing="1" cellpadding="4" width="100%"  align="left"
+				class="tableborder" id="table3">
+
+				<input type="hidden" name="action" value="update" />
+				<input type="hidden" name="productID" value="p001" />
+				<tr>
+					<td colspan="12" class="header">
+						修改商品信息
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						商品编号：
+					</td>
+					<td class="altbg2">
+						<input type="text" name="serialNumber" size="34" value="p001" />
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						商品名称：
+					</td>
+					<td class="altbg2">
+						<input type="text" name="name" size="34" value="苹果" />
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						商品商标：
+					</td>
+					<td class="altbg2">
+						<input type="text" name="brand" size="34" value="hof" />
+					</td>
+				</tr>	
+				<tr>
+					<td class="altbg1">
+						商品型号：
+					</td>
+					<td class="altbg2">
+						<input type="text" name="model" size="34" value="11111111" />
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						商品价格：
+					</td>
+					<td class="altbg2">
+						<input type="text" name="price" size="34" value="12.3" />
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						商品图片：
+					</td>
+					<td class="altbg2">
+						<img src="../image/d_r11_10_r1_c81.jpg" name="img" width="100px" height="100px">
+						<input type="file" name="picture"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="altbg1">
+						商品介绍：
+					</td>
+					<td class="altbg2">
+						<textarea rows="5" cols="60" name="description" >非常好吃</textarea>
+					</td>
+				</tr>
+				
+
+				<tr>
+					<td class="altbg1">
+					</td>
+					<td class="altbg2">
+						<input type="submit" value="提交" name="B1" />
+						&nbsp;
+						<input type="reset" value="重置" name="B2" />
+					</td>
+				</tr>
+
+			</table>
+		</form>
+	</body>
+	<script type="text/javascript" src="../static/js/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript">
+		//获取商品id
+		var pid =window.sessionStorage.getItem("pid");
+		var ssrc;
+		//渲染
+		$.ajax({
+			type:"post",
+			url:"/aiccse/c/goods?usr=selectPro",
+			dataType:"json",
+			data:{id:pid},
+			success:function(result){
+				$('[name="serialNumber"]').val(result.pid); //编号
+				$('[name="name"]').val(result.pname); //名称
+				$('[name="brand"]').val(result.pflag); //商标
+				$('[name="model"]').val(result.ptype);//型号
+				$('[name="img"]').attr("src","../"+result.pimg);//图片
+				ssrc=result.pimg;
+				$('[name="price"]').val(result.pprice); //价格
+				$('[name="description"]').val(result.description);//介绍
+			}
+		});
+		//修改商品粮
+		$('[name="B1"]').click(function(){
+			var name = $('[name="name"]').val(); //名称
+			var brand = $('[name="brand"]').val(); //商标
+			var model = $('[name="model"]').val();//型号
+			var price = $('[name="price"]').val(); //价格
+			var picture = "杀你吗"//图片
+			var description = $('[name="description"]').val();//介绍
+			var jsor = {"pid":pid,"pname":name,"pflag":brand,"ptype":model,"pprice":price,"pimg":ssrc,"description":description};
+			$.ajax({
+				url:"/aiccse/c/goods?usr=updateProduct",
+				data:{name:JSON.stringify(jsor)},
+				dataType:"json",
+				type:"post",
+				success: function(result) {
+					alert(result.msg)
+					if(result.code == 200){
+						location.href="manageProduct.html";
+					}
+				}
+			})
+			return false;
+		})
+		
+		
+		
+	$('[name="picture"]').on('change',function(){
+		var th = $(this);
+    	var filePath = $(this).val(), //获取到input的value，里面是文件的路径
+    		fileFormat = filePath.substring(filePath.lastIndexOf(".")).toLowerCase(),
+    		src = window.URL.createObjectURL(this.files[0]); //转成可以在本地预览的格式
+    	// 检查是否是图片
+//		alert(filePath)
+    	if( !fileFormat.match(/.png|.jpg|.jpeg/) ) {
+    		alert("上传错误,文件格式必须为：png/jpg/jpeg")
+        	return;  
+        }else{
+        	$('[name="img"]').attr("src",src);
+    		var f = $('[name="form1"]');
+    		var form = new FormData(f[0]);
+    		$.ajax({
+    			url:"/aiccse/c/goods?usr=addimg",
+    			data:form,
+    			processData:false,
+    			type:"post",
+    			contentType:false,
+    			success:function(result){
+    			}
+    			
+    		});
+        }
+	});
+
+		
+			
+			
+		
+	</script>
+</html>

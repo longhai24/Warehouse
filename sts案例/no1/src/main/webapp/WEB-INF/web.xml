@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+  <display-name>no1</display-name>
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  <servlet>
+    <description></description>
+    <display-name>no1Action</display-name>
+    <servlet-name>no1Action</servlet-name>
+    <servlet-class>com.tx.no1.action.no1Action</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>no1Action</servlet-name>
+    <url-pattern>/no1Action</url-pattern>
+  </servlet-mapping>
+</web-app>

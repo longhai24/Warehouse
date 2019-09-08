@@ -1,0 +1,155 @@
+
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>商品-修改</title>
+<link rel="stylesheet" type="text/css" href="../css/style_admin.css">
+
+<script type="text/javascript">
+	function fun_check_form() {
+		if (document.form1.name.value == "") {
+			alert("请输入新闻标题信息。");
+			return false;
+		} else if (document.form1.serialNumber.value == "") {
+			alert("请输入新闻内容。");
+			return false;
+		} else {
+			return true;
+		}
+	}
+</script>
+</head>
+
+<body>
+	<form name="form1" action="updateProduct.jsp" method="post"
+		onSubmit="return fun_check_form()">
+		<table cellspacing="1" cellpadding="4" width="100%" align="left"
+			class="tableborder" id="table3">
+
+			<input type="hidden" name="action" value="update" />
+			<input type="hidden" name="productID" value="p001" />
+			<tr>
+				<td colspan="12" class="header">修改商品信息</td>
+			</tr>
+			<tr>
+				<td class="altbg1">商品编号：</td>
+				<td class="altbg2"><input disabled="true" type="text" name="serialNumber"
+					size="34" value="p001" /></td>
+			</tr>
+			<tr>
+				<td class="altbg1">商品名称：</td>
+				<td class="altbg2"><input type="text" name="name" size="34"
+					value="12" /></td>
+			</tr>
+			<tr>
+				<td class="altbg1">商品商标：</td>
+				<td class="altbg2"><input type="text" name="brand" size="34"
+					value="hof" /></td>
+			</tr>
+			<tr>
+				<td class="altbg1">商品型号：</td>
+				<td class="altbg2"><input type="text" name="model" size="34"
+					value="11111111" /></td>
+			</tr>
+			<tr>
+				<td class="altbg1">商品价格：</td>
+				<td class="altbg2"><input type="text" name="price" size="34"
+					value="12.3" /></td>
+			</tr>
+			<tr>
+				<td class="altbg1">商品图片：</td>
+				<td class="altbg2" colspan="11">
+				<img src="" name="img" width="100px" height="100px">
+				<input type="file"name="picture" size="34"></td>
+				</td>
+			</tr>
+			<tr>
+				<td class="altbg1">商品介绍：</td>
+				<td class="altbg2"><textarea rows="5" cols="60"
+						name="description">非常好吃</textarea></td>
+			</tr>
+
+
+			<tr>
+				<td class="altbg1"></td>
+				<td class="altbg2"><input id="sub" type="submit" value="提交" name="B1" />
+					&nbsp; <input type="reset" value="重置" name="B2" /></td>
+			</tr>
+
+		</table>
+	</form>
+</body>
+<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+		var pid = window.sessionStorage.getItem("pid");
+		var pname = window.sessionStorage.getItem("pname");
+		var ptype = window.sessionStorage.getItem("ptype");
+		var pprice = window.sessionStorage.getItem("pprice");
+		var pimg = window.sessionStorage.getItem("pimg");
+		var pflag = window.sessionStorage.getItem("pflag");
+		$(document.form1.serialNumber).val(pid);
+		$(document.form1.name).val(pname);
+		$(document.form1.brand).val(pflag);
+		$(document.form1.model).val(ptype);
+		$(document.form1.price).val(pprice);
+		$('[name="img"]').attr("src","../"+pimg)
+		
+		$("#sub").click(function() {
+			var pid = $(document.form1.serialNumber).val();
+			var pname = $(document.form1.name).val();
+			var ptype = $(document.form1.model).val();
+			var pprice = $(document.form1.price).val();
+			var pimg = $(document.form1.picture).val();
+			var pflag = $(document.form1.brand).val(); 
+			var sum = {pid:pid,pname:pname,ptype:ptype,pprice:pprice,pimg:pimg,pflag:pflag};
+			 var i =JSON.stringify(sum);
+			$.ajax({
+				url:"http://localhost:8080/Goods/c/GoodsAction?method=updatePro",
+				data:{i:i},
+				dataType:"json",
+				type:"post",
+				success: function(data) {
+					if (data.fir=="200") {
+						alert(data.sex)
+						window.location.href="manageProduct.html"
+					}
+					else{
+						alert(data.sex)
+					}
+				}
+			})
+			return false;
+		})
+		
+		
+		$('[name="picture"]').on('change',function(){
+		var th = $(this);
+    	var filePath = $(this).val(), //获取到input的value，里面是文件的路径
+    		fileFormat = filePath.substring(filePath.lastIndexOf(".")).toLowerCase(),
+    		src = window.URL.createObjectURL(this.files[0]); //转成可以在本地预览的格式
+    	// 检查是否是图片
+//		alert(filePath)
+    	if( !fileFormat.match(/.png|.jpg|.jpeg/) ) {
+    		alert("上传错误,文件格式必须为：png/jpg/jpeg")
+        	return;  
+        }else{
+        	$('[name="img"]').attr("src",src);
+    		var f = $('[name="form1"]');
+    		var form = new FormData(f[0]);
+    		$.ajax({
+    			url:"http://localhost:8080/Goods/c/GoodsAction?method=uploading",
+    			data:form,
+    			processData:false,
+    			type:"post",
+    			contentType:false,
+    			success:function(result){
+    			}
+    			
+    		});
+        }
+	});
+
+</script>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body >
+		<p><h3>商品信息管理</h3> <span><a href="liqi.html">新增商品</a></span></p>
+		
+		<table border="1">
+			<thead>
+				<tr>
+					<td>商品名称</td>
+					<td>商品分类</td>
+					<td>商品型号</td>
+					<td>商品单价</td>
+					<td>操作</td>
+				</tr>
+			</thead>
+			<tbody id="td">
+			</tbody>
+		</table>
+</body>
+<script type="text/javascript" src="../static/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+	$.ajax({
+			url:"/demogoods/goods?usr=select",
+			type:"post",
+			dataType:"json",
+			success:function(result){
+				$.each(result,function(i,j){
+					var tr = $("<tr>");
+					var inp = $("<input type='hidden'/>").val(j.goodsid)
+					var td1 =$("<td>").html(j.goodsName).append(inp)
+					var td2 =$("<td>").html(j.glzz.goodsClassName)
+					var td3 =$("<td>").html(j.goodsType)
+					var td4 =$("<td>").html(j.goodsPrice)
+					var td5 = $("<td>").append($("<a class='c'>删除&nbsp&nbsp</a>")).append($("<a class='x'>修改</a>"));
+					tr.append(td1).append(td2).append(td3).append(td4).append(td5)
+					$("#td").append(tr);
+					$("tr:odd").css("background","#000080")
+				})
+			}
+		})
+	
+	//删除
+	$(document).on("click",".c",function(){
+		if(confirm("确定要删除么")){
+			var thi = $(this)
+		var id = thi.parents("tr").find("td:eq(0)").find("input").val();
+		$.ajax({
+			url:"/demogoods/goods?usr=delete",
+			type:"post",
+			data:{id:id},
+			dataType:"text",
+			success:function(result){
+				if(result == 1){
+					thi.parents("tr").remove()
+				}
+			}
+		})
+		}
+	})
+	$(document).on("click",".x",function(){
+		var id = $(this).parents("tr").find("td:eq(0)").find("input").val();
+		window.sessionStorage.setItem("id",id) 
+		window.location.href="into.html";
+	})
+</script>
+</html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.IStu">
+	<delete id="DelStuByStuId">
+		DELETE FROM `stu` WHERE`stuid` = #{did}
+	</delete>
+	<update id="UpdateStuByStuid">
+		UPDATE `stu` SET `clazzid` =#{cid} WHERE `stuid`
+		=#{uid};
+	</update>
+	<resultMap type="com.accp.pojo.clazz" id="SelAllStuByClazz">
+		<collection property="stulist" column="id" select="selcla"></collection>
+	</resultMap>
+	<select id="selcla" resultType="com.accp.pojo.stu">
+		select * from stu where clazzid =
+		#{0}
+	</select>
+	<select id="SelAllStuByClazz" resultMap="SelAllStuByClazz">
+		select * from clazz
+		where id = #{cid}
+	</select>
+
+	<select id="SelSomeStuBystuid" resultMap="asd">
+		select * from stu where
+		stuid = #{sid}
+	</select>
+	<resultMap type="com.accp.pojo.stu" id="asd">
+		<association property="cla" column="clazzid" select="i"></association>
+	</resultMap>
+	<select id="i" resultType="com.accp.pojo.clazz">select * from clazz where id =#{0}
+	</select>
+</mapper>
